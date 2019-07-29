@@ -1,0 +1,8 @@
+You need to download SMFL library from Google and set it on your machine
+
+/SFMLApplication.vcxproj
+/SFMLApplication.vcxproj.filters
+/SFMLApplication.vcxproj.user
+
+//Debug Log
+/Debug
