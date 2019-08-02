@@ -6,11 +6,14 @@ using namespace std;
 
 int main() {
 	RenderWindow window(VideoMode(1920, 1080), "Drift Race", sf::Style::Close | sf::Style::Titlebar);
+	window.setFramerateLimit(90);
 	RectangleShape player(Vector2f(70, 120));
 
-	Texture bg, playerText;
-	bg.loadFromFile("images/newFbg.png");
-	bg.setSmooth(true);
+	Texture bg1, bg2, playerText;
+	bg1.loadFromFile("images/groupTemp.png");
+	bg1.setSmooth(true);
+	bg2.loadFromFile("images/groupShip.png");
+	bg2.setSmooth(true);
 	
 
 	playerText.loadFromFile("images/Car.png");
@@ -22,16 +25,17 @@ int main() {
 
 	//Setting up a sprite
 	Sprite mainBG, mainBG2, trackSp;
-	mainBG.setTexture(bg);
-	mainBG2.setTexture(bg);
+	mainBG.setTexture(bg1);
+	mainBG2.setTexture(bg2);
 
 	float x = 705, y = 900;
-	float maxSpeed = 2;
+	float maxSpeed = 7;
 	float speed = 0;
 	float acc = 2;
 	float startX = 0, startY = 0;
 	float BackgroundY1 = 0;
 	float BackgroundY2 = -1080;
+
 
 	//Loading Window
 	while (window.isOpen()) {
@@ -51,7 +55,7 @@ int main() {
 			if (player.getPosition().y >= 0 + acc) {
 				x = x;
 				y -= acc;
-				startY = 2.2f;
+//				startY = 2.2f;
 			}
 			
 		}
@@ -81,13 +85,15 @@ int main() {
 		//Creat scrolling background
 		mainBG.setPosition(Vector2f(320.0f, BackgroundY1));
 		mainBG2.setPosition(Vector2f(320.0f, BackgroundY2));
-		if (BackgroundY2 > 0)
+		if (mainBG.getPosition().y >= 1080)
 		{
-			BackgroundY1 = 0;
-			BackgroundY2 = BackgroundY1 - 1080;
+			BackgroundY1 = -1080;
 		}
-		BackgroundY1 += 1.0;
-		BackgroundY2 += 1.0;
+		if (mainBG2.getPosition().y >= 1080) {
+			BackgroundY2 = -1080;
+		}
+		BackgroundY1 += 5.0;
+		BackgroundY2 += 5.0;
 		
 
 		//Clearing and creating windows
