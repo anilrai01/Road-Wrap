@@ -18,6 +18,7 @@ Explosion::Explosion(float posX, float posY)
 void Explosion::drawExplosion(RenderWindow& window)
 {
 	Frame += animSpeed;
+	//Repeated Frame set
 	//if (Frame > frameCount) Frame -= frameCount;
 	explodeSpr.setTextureRect(IntRect(int(Frame) * 192, 0, 192, 192));
 	explodeSpr.setPosition(Vector2f(posX, posY));
