@@ -5,7 +5,7 @@ using namespace sf;
 using namespace std;
 
 #include "Player.h";
-
+#include "Enemy.h";
 #include "Explosion.h";
 
 int main() {
@@ -40,7 +40,7 @@ int main() {
 		cout << "Error Loading File 3" << endl;
 	}
 
-	if (bgCover.loadFromFile("images/testBG.png")) 
+	if (bgCover.loadFromFile("images/bgCover.png")) 
 	{
 		cout << "Files Cover loaded Successfully";
 		bgCover.setSmooth(true);
@@ -67,6 +67,13 @@ int main() {
 	
 	//Player Object
 	Player racer("images/Car.png", 705.0f, 900.0f);
+
+	//Enemies Objects
+	Enemy en1("images/obs1.png", 705.0f, 500);
+	Enemy en2("images/obs2.png", 805.0f, -1400);
+	Enemy en3("images/obs3.png", 765.0f, -1800);
+	Enemy en4("images/obs4.png", 905.0f, -1900);
+
 	//Explosion Object
 	Explosion explode(800, 500);
 
@@ -134,6 +141,12 @@ int main() {
 		
 		//Render Player Object
 		racer.drawPlayer(window);
+
+		//Render Enemies
+		en1.drawEnemy(window);
+		en2.drawEnemy(window);
+		en3.drawEnemy(window);
+		en4.drawEnemy(window);
 
 		//Draw explosion
 		explode.drawExplosion(window);
