@@ -44,6 +44,5 @@ void Player::movePlayer(char direction)
 			posX += acc;
 		}
 	}
-
 	playerSprite.setPosition(Vector2f(posX, posY));
 }

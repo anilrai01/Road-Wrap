@@ -1,5 +1,4 @@
 #pragma once
-
 #include <iostream>
 #include <string>
 using namespace std;
@@ -15,7 +14,6 @@ public:
 
 	void drawPlayer(RenderWindow& window);
 	void movePlayer(char direction);
-	
 
 private:
 	Texture playerTexture;

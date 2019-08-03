@@ -11,7 +11,6 @@ class Explosion
 public:
 	Explosion() { this->posX = 0; this->posY = 0; };
 	Explosion(float posX, float posY);
-
 	void drawExplosion(RenderWindow& window);
 
 private:
