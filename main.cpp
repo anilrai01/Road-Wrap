@@ -4,12 +4,14 @@ using namespace sf;
 #include<iostream>
 using namespace std;
 
+#include "Player.h";
+
 int main() {
 	RenderWindow window(VideoMode(1920, 1080), "Drift Race", sf::Style::Close | sf::Style::Titlebar);
 	//window.setFramerateLimit(90);
-	RectangleShape player(Vector2f(70, 120));
 
-	Texture bg1, bg2, bg3, bgCover, playerText;
+	Texture bg1, bg2, bg3, bgCover;
+
 	if (bg1.loadFromFile("images/Group1.png"))
 	{
 		cout << "File 1 Loaded Successfully" << endl;
@@ -46,34 +48,22 @@ int main() {
 	}
 
 
-	if (playerText.loadFromFile("images/Car.png")) {
-		cout << "Player Car loaded Successfully" << endl;
-	}
-	else {
-		cout << "Error Loading Player File" << endl;
-	}
-	playerText.setSmooth(true);
-
-	//Setting Player Car
-	//player.setOrigin(Vector2f(0, 0));
-	player.setTexture(&playerText);
-
 	//Setting up a sprite
 	Sprite mainBG, mainBG2, mainBG3, mainCover;
 	mainBG.setTexture(bg1);
 	mainBG2.setTexture(bg2);
 	mainBG3.setTexture(bg3);
 	mainCover.setTexture(bgCover);
-
-	float x = 705, y = 900;
+	
 	float maxSpeed = 10.0f;
 	float speed = 0;
-	float acc = 2.5f;
 	float bgAcc = 0.005f;
 	float BackgroundY1 = 0;
 	float BackgroundY2 = -1080.0f;
 	float BackgroundY3 = -2160.0f;
 
+	//Player Object
+	Player racer("images/Car.png", 705.0f, 900.0f);
 
 	//Loading Window
 	while (window.isOpen()) {
@@ -87,37 +77,19 @@ int main() {
 			}
 		}
 
-		//bool Up = 0, Right = 0, Down = 0, Left = 0;
-		//car movement
+		//player movement
 
 		if (Keyboard::isKeyPressed(Keyboard::Up)) {
-
-			if (player.getPosition().y >= 0 + acc) {
-				x = x;
-				y -= acc;
-			}
-			
+			racer.movePlayer('u');
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Right)) {
-			//cout << player.getPosition().x;
-			if ( player.getPosition().x < 1270 - acc) {
-				x += acc;
-				y = y;
-			}
-			
+			racer.movePlayer('r');
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Down)) {
-			if (player.getPosition().y <= 900 - acc) {
-				y += acc;
-				x = x;
-			}
+			racer.movePlayer('d');
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Left)) {
-			//cout << player.getPosition().x;
-			if (player.getPosition().x >= 705 + acc) {
-				x -= acc;
-				y = y;
-			}
+			racer.movePlayer('l');
 		}
 
 		//Create scrolling background
@@ -155,9 +127,9 @@ int main() {
 		window.draw(mainBG2);
 		window.draw(mainBG3);
 		
-		player.setPosition(Vector2f(x, y));
-		window.draw(player);
-		
+		//Render Player Object
+		racer.drawPlayer(window);
+	
 		window.display();
 	}
 }
