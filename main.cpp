@@ -6,6 +6,8 @@ using namespace std;
 
 #include "Player.h";
 
+#include "Explosion.h";
+
 int main() {
 	RenderWindow window(VideoMode(1920, 1080), "Drift Race", sf::Style::Close | sf::Style::Titlebar);
 	//window.setFramerateLimit(90);
@@ -49,11 +51,12 @@ int main() {
 
 
 	//Setting up a sprite
-	Sprite mainBG, mainBG2, mainBG3, mainCover;
+	Sprite mainBG, mainBG2, mainBG3, mainCover, explodeSpr;
 	mainBG.setTexture(bg1);
 	mainBG2.setTexture(bg2);
 	mainBG3.setTexture(bg3);
 	mainCover.setTexture(bgCover);
+
 	
 	float maxSpeed = 10.0f;
 	float speed = 0;
@@ -61,9 +64,11 @@ int main() {
 	float BackgroundY1 = 0;
 	float BackgroundY2 = -1080.0f;
 	float BackgroundY3 = -2160.0f;
-
+	
 	//Player Object
 	Player racer("images/Car.png", 705.0f, 900.0f);
+	//Explosion Object
+	Explosion explode(800, 500);
 
 	//Loading Window
 	while (window.isOpen()) {
@@ -76,7 +81,7 @@ int main() {
 				break;
 			}
 		}
-
+	
 		//player movement
 
 		if (Keyboard::isKeyPressed(Keyboard::Up)) {
@@ -111,7 +116,7 @@ int main() {
 		}
 
 		if (speed <= maxSpeed) {
-			cout << "True";
+			//cout << "True";
 			speed += bgAcc;
 		}
 		
@@ -129,6 +134,9 @@ int main() {
 		
 		//Render Player Object
 		racer.drawPlayer(window);
+
+		//Draw explosion
+		explode.drawExplosion(window);
 	
 		window.display();
 	}
