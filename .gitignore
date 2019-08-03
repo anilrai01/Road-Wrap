@@ -1,17 +1,8 @@
-<<<<<<< HEAD
+// You need to have SFML in your device to play edit or tweak the game
+// Enjoy
 #Debug Log
 /Debug
 
 /Square.vcxproj
 /Square.vcxproj.filters
 /Square.vcxproj.user
-=======
-You need to download SMFL library from Google and set it on your machine
-
-/SFMLApplication.vcxproj
-/SFMLApplication.vcxproj.filters
-/SFMLApplication.vcxproj.user
-
-//Debug Log
-/Debug
->>>>>>> eda69e2da492b5eed7cc3b90a2c87be028190e0e
