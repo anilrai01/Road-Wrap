@@ -84,10 +84,10 @@ int main() {
 	//Enemies Objects
 	Enemy en1(getRandomImage(), getRandomNumber(705, 805, 'e'), getRandomNumber(-1500, -1700, 'e'), getRandomNumber(3, 8, 's'));
 	Enemy en2(getRandomImage(), getRandomNumber(815, 915, 'e'), getRandomNumber(-1800, -2000, 'e'), getRandomNumber(3, 8, 's'));
-	Enemy en3("images/obs3.png", getRandomNumber(925, 1025, 'e'), getRandomNumber(-2200, -2400, 'e'), getRandomNumber(3, 8, 's'));
-	Enemy en4("images/obs4.png", getRandomNumber(1035, 1135, 'e'), getRandomNumber(-2500, -2700, 'e'), getRandomNumber(3, 8, 's'));
-	Enemy en5("images/obs1.png", getRandomNumber(1145, 1245, 'e'), getRandomNumber(-2800, -3000, 'e'), getRandomNumber(3, 8, 's'));
-	Enemy en6("images/obs3.png", getRandomNumber(1255, 1285, 'e'), getRandomNumber(-3100, -3300, 'e'), getRandomNumber(3, 8, 's'));
+	Enemy en3(getRandomImage(), getRandomNumber(925, 1025, 'e'), getRandomNumber(-2200, -2400, 'e'), getRandomNumber(3, 8, 's'));
+	Enemy en4(getRandomImage(), getRandomNumber(1035, 1135, 'e'), getRandomNumber(-2500, -2700, 'e'), getRandomNumber(3, 8, 's'));
+	Enemy en5(getRandomImage(), getRandomNumber(1145, 1245, 'e'), getRandomNumber(-2800, -3000, 'e'), getRandomNumber(3, 8, 's'));
+	Enemy en6(getRandomImage(), getRandomNumber(1255, 1285, 'e'), getRandomNumber(-3100, -3300, 'e'), getRandomNumber(3, 8, 's'));
 
 
 	//Explosion Object
@@ -180,18 +180,6 @@ int main() {
 			en6.setNewTexture(getRandomImage());
 			en6.setSpeed(getRandomNumber(3, 8, 's'));
 		}
-		/*
-		if (en7.getPosY() > 1080) {
-			en7.setPosY(getRandomNumber(-3300, -3500, 'e'));
-			en7.setNewTexture(getRandomImage());
-			en7.setSpeed(getRandomNumber(3, 6, 's'));
-		}
-		if (en8.getPosY() > 1080) {
-			en8.setPosY(getRandomNumber(-3600, -3800, 'e'));
-			en8.setNewTexture(getRandomImage());
-			en8.setSpeed(getRandomNumber(3, 6, 's'));
-		}
-		*/
 
 		//Clearing and creating windows
 		window.clear();
@@ -211,8 +199,6 @@ int main() {
 		en4.drawEnemy(window);
 		en5.drawEnemy(window);
 		en6.drawEnemy(window);
-		//en7.drawEnemy(window);
-		//en8.drawEnemy(window);
 	
 		//Draw explosion
 		explode.drawExplosion(window);
