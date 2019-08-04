@@ -4,11 +4,32 @@ using namespace sf;
 #include<iostream>
 using namespace std;
 
-#include "Player.h";
-#include "Enemy.h";
-#include "Explosion.h";
+#include<sstream>
+
+#include "Player.h"
+
+#include "Enemy.h"
+
+#include "Explosion.h"
+
+
+//Creat random Number for game loop
+int getRandomNumber(int a, int b, char ch);
+string getRandomImage();
 
 int main() {
+
+	//In Game variables for game loop
+	float maxSpeed = 10.0f;
+	float speed = 0;
+	float bgAcc = 0.005f;
+	float BackgroundY1 = 0;
+	float BackgroundY2 = -1080.0f;
+	float BackgroundY3 = -2160.0f;
+	float borderRight = 0;
+	float borderLeft = 705.0f;
+
+
 	RenderWindow window(VideoMode(1920, 1080), "Drift Race", sf::Style::Close | sf::Style::Titlebar);
 	//window.setFramerateLimit(90);
 
@@ -56,23 +77,20 @@ int main() {
 	mainBG2.setTexture(bg2);
 	mainBG3.setTexture(bg3);
 	mainCover.setTexture(bgCover);
-
-	
-	float maxSpeed = 10.0f;
-	float speed = 0;
-	float bgAcc = 0.005f;
-	float BackgroundY1 = 0;
-	float BackgroundY2 = -1080.0f;
-	float BackgroundY3 = -2160.0f;
 	
 	//Player Object
-	Player racer("images/Car.png", 705.0f, 900.0f);
+	Player racer("images/Car.png", 985, 900);
 
 	//Enemies Objects
-	Enemy en1("images/obs1.png", 705.0f, 500);
-	Enemy en2("images/obs2.png", 805.0f, -1400);
-	Enemy en3("images/obs3.png", 765.0f, -1800);
-	Enemy en4("images/obs4.png", 905.0f, -1900);
+	Enemy en1(getRandomImage(), getRandomNumber(705, 805, 'e'), getRandomNumber(-1500,-1700, 'e'));
+	
+	Enemy en2(getRandomImage(), getRandomNumber(810, 905, 'e'), getRandomNumber(-1800, -2000, 'e'));
+	/*
+	Enemy en3("images/obs3.png", getRandomNumber(915, 1005), getRandomNumber(-2200, -2400));
+	Enemy en4("images/obs4.png", getRandomNumber(1015, 1105), getRandomNumber(-2500, -2700));
+	Enemy en5("images/obs1.png", getRandomNumber(1115, 1205), getRandomNumber(-2800, -3000));
+	Enemy en6("images/obs3.png", getRandomNumber(1215, 1285), getRandomNumber(-3100, -3300));
+	*/
 
 	//Explosion Object
 	Explosion explode(800, 500);
@@ -131,6 +149,18 @@ int main() {
 		BackgroundY2 += speed;
 		BackgroundY3 += speed;
 
+
+		// Regeneration of Enemy
+		//cout << en1.getPosY() << endl;
+		if (en1.getPosY() > 1080) {
+			en1.setPosY(getRandomNumber(-1500, -1700, 'e'));
+			en1.setNewTexture(getRandomImage());
+		}
+		if (en2.getPosY() > 1080) {
+			en2.setPosY(getRandomNumber(-1800, -2200, 'e'));
+			en1.setNewTexture(getRandomImage());
+		}
+
 		//Clearing and creating windows
 		window.clear();
 
@@ -145,12 +175,40 @@ int main() {
 		//Render Enemies
 		en1.drawEnemy(window);
 		en2.drawEnemy(window);
+		/*
 		en3.drawEnemy(window);
 		en4.drawEnemy(window);
-
+		en5.drawEnemy(window);
+		en6.drawEnemy(window);
+		*/
 		//Draw explosion
 		explode.drawExplosion(window);
 	
 		window.display();
 	}
+}
+
+int getRandomNumber(int a, int b, char ch)
+{
+	static bool first = true; if (first) { srand(time(NULL)); first = false; }
+	int result = a + rand() % ((b + 1) - a);
+	if (ch == 'e') {
+		result = (result / 10) * 10;
+		return result;
+	}
+	else if (ch == 'i') {
+		return result;
+	}
+	return result;
+}
+
+string getRandomImage() {
+	stringstream ss;
+	ss << getRandomNumber(1, 4, 'i');
+	string imgTag = ss.str();
+
+	string imgDir = "images/obs" + imgTag + ".png";
+	cout << imgDir;
+
+	return imgDir;
 }

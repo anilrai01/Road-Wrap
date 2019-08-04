@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(string imgDirectory, float posX, float posY)
+Player::Player(string imgDirectory, int posX, int posY)
 {
 	if (playerTexture.loadFromFile(imgDirectory)) {
 		cout << "Player Loaded on the screen";
@@ -19,7 +19,7 @@ Player::Player(string imgDirectory, float posX, float posY)
 void Player::drawPlayer(RenderWindow& window)
 {
 	window.draw(playerSprite);
-	playerSprite.setPosition(Vector2f(posX, posY));
+	playerSprite.setPosition(posX, posY);
 }
 
 void Player::movePlayer(char direction)

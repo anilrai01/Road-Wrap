@@ -10,15 +10,18 @@ class Enemy
 {
 public:
 	Enemy() { this->posX = 0; this->posY = 0; };
-	Enemy(string imgDirectory, float posX, float posY);
+	Enemy(string imgDirectory, int posX, int posY);
 	void drawEnemy(RenderWindow& window);
 	void updateEnemy();
+	int getPosX();
+	int getPosY();
+	void setPosY(int);
+	void setNewTexture(string imgDir);
 
 private:
 	Texture enemyTxt;
 	Sprite enemySpr;
-	float posX;
-	float posY;
-	float acc = 3.5f;
+	int posX;
+	int posY;
+	int acc = 3;
 };
-

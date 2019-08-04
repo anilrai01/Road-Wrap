@@ -10,7 +10,7 @@ class Player
 {
 public:
 	Player() {};
-	Player(string imgDirectory, float posX, float posY);
+	Player(string imgDirectory, int posX, int posY);
 
 	void drawPlayer(RenderWindow& window);
 	void movePlayer(char direction);
