@@ -82,15 +82,13 @@ int main() {
 	Player racer("images/Car.png", 985, 900);
 
 	//Enemies Objects
-	Enemy en1(getRandomImage(), getRandomNumber(705, 805, 'e'), getRandomNumber(-1500,-1700, 'e'));
-	
-	Enemy en2(getRandomImage(), getRandomNumber(810, 905, 'e'), getRandomNumber(-1800, -2000, 'e'));
-	/*
-	Enemy en3("images/obs3.png", getRandomNumber(915, 1005), getRandomNumber(-2200, -2400));
-	Enemy en4("images/obs4.png", getRandomNumber(1015, 1105), getRandomNumber(-2500, -2700));
-	Enemy en5("images/obs1.png", getRandomNumber(1115, 1205), getRandomNumber(-2800, -3000));
-	Enemy en6("images/obs3.png", getRandomNumber(1215, 1285), getRandomNumber(-3100, -3300));
-	*/
+	Enemy en1(getRandomImage(), getRandomNumber(705, 805, 'e'), getRandomNumber(-1500, -1700, 'e'), getRandomNumber(3, 8, 's'));
+	Enemy en2(getRandomImage(), getRandomNumber(815, 915, 'e'), getRandomNumber(-1800, -2000, 'e'), getRandomNumber(3, 8, 's'));
+	Enemy en3("images/obs3.png", getRandomNumber(925, 1025, 'e'), getRandomNumber(-2200, -2400, 'e'), getRandomNumber(3, 8, 's'));
+	Enemy en4("images/obs4.png", getRandomNumber(1035, 1135, 'e'), getRandomNumber(-2500, -2700, 'e'), getRandomNumber(3, 8, 's'));
+	Enemy en5("images/obs1.png", getRandomNumber(1145, 1245, 'e'), getRandomNumber(-2800, -3000, 'e'), getRandomNumber(3, 8, 's'));
+	Enemy en6("images/obs3.png", getRandomNumber(1255, 1285, 'e'), getRandomNumber(-3100, -3300, 'e'), getRandomNumber(3, 8, 's'));
+
 
 	//Explosion Object
 	Explosion explode(800, 500);
@@ -155,11 +153,45 @@ int main() {
 		if (en1.getPosY() > 1080) {
 			en1.setPosY(getRandomNumber(-1500, -1700, 'e'));
 			en1.setNewTexture(getRandomImage());
+			en1.setSpeed(getRandomNumber(3, 8, 's'));
 		}
 		if (en2.getPosY() > 1080) {
-			en2.setPosY(getRandomNumber(-1800, -2200, 'e'));
-			en1.setNewTexture(getRandomImage());
+			en2.setPosY(getRandomNumber(-1800, -2000, 'e'));
+			en2.setNewTexture(getRandomImage());
+			en2.setSpeed(getRandomNumber(3, 8, 's'));
 		}
+		if (en3.getPosY() > 1080) {
+			en3.setPosY(getRandomNumber(-2100, -2300, 'e'));
+			en3.setNewTexture(getRandomImage());
+			en3.setSpeed(getRandomNumber(3, 8, 's'));
+		}
+		if (en4.getPosY() > 1080) {
+			en4.setPosY(getRandomNumber(-2400, -2600, 'e'));
+			en4.setNewTexture(getRandomImage());
+			en4.setSpeed(getRandomNumber(3, 8, 's'));
+		}
+		if (en5.getPosY() > 1080) {
+			en5.setPosY(getRandomNumber(-2700, -2900, 'e'));
+			en5.setNewTexture(getRandomImage());
+			en5.setSpeed(getRandomNumber(3, 8, 's'));
+		}
+		if (en6.getPosY() > 1080) {
+			en6.setPosY(getRandomNumber(-3000, -3200, 'e'));
+			en6.setNewTexture(getRandomImage());
+			en6.setSpeed(getRandomNumber(3, 8, 's'));
+		}
+		/*
+		if (en7.getPosY() > 1080) {
+			en7.setPosY(getRandomNumber(-3300, -3500, 'e'));
+			en7.setNewTexture(getRandomImage());
+			en7.setSpeed(getRandomNumber(3, 6, 's'));
+		}
+		if (en8.getPosY() > 1080) {
+			en8.setPosY(getRandomNumber(-3600, -3800, 'e'));
+			en8.setNewTexture(getRandomImage());
+			en8.setSpeed(getRandomNumber(3, 6, 's'));
+		}
+		*/
 
 		//Clearing and creating windows
 		window.clear();
@@ -175,12 +207,13 @@ int main() {
 		//Render Enemies
 		en1.drawEnemy(window);
 		en2.drawEnemy(window);
-		/*
 		en3.drawEnemy(window);
 		en4.drawEnemy(window);
 		en5.drawEnemy(window);
 		en6.drawEnemy(window);
-		*/
+		//en7.drawEnemy(window);
+		//en8.drawEnemy(window);
+	
 		//Draw explosion
 		explode.drawExplosion(window);
 	
@@ -196,7 +229,7 @@ int getRandomNumber(int a, int b, char ch)
 		result = (result / 10) * 10;
 		return result;
 	}
-	else if (ch == 'i') {
+	else if (ch == 'i' || ch == 's') {
 		return result;
 	}
 	return result;
@@ -208,7 +241,7 @@ string getRandomImage() {
 	string imgTag = ss.str();
 
 	string imgDir = "images/obs" + imgTag + ".png";
-	cout << imgDir;
+	//cout << imgDir;
 
 	return imgDir;
 }

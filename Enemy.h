@@ -9,19 +9,20 @@ using namespace sf;
 class Enemy
 {
 public:
-	Enemy() { this->posX = 0; this->posY = 0; };
-	Enemy(string imgDirectory, int posX, int posY);
+	Enemy() { this->posX = 0; this->posY = 0; this->acc = 0; };
+	Enemy(string imgDirectory, int posX, int posY, int speed);
 	void drawEnemy(RenderWindow& window);
 	void updateEnemy();
 	int getPosX();
 	int getPosY();
 	void setPosY(int);
-	void setNewTexture(string imgDir);
+	void setNewTexture(string);
+	void setSpeed(int);
 
 private:
 	Texture enemyTxt;
 	Sprite enemySpr;
 	int posX;
 	int posY;
-	int acc = 3;
+	int acc;
 };
