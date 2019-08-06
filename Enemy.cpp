@@ -2,11 +2,16 @@
 
 Enemy::Enemy(string imgDirectory, int posX, int posY, int speed)
 {
-	if (enemyTxt.loadFromFile(imgDirectory)) {
-		cout << "Enemy Diployed" << endl;
+
+	try
+	{
+		if (!enemyTxt.loadFromFile(imgDirectory)) {
+			throw "Error loading Enemy";
+		}
 	}
-	else {
-		cout << "Failed loading Enemy";
+	catch (const char * msg)
+	{
+		cout << msg;
 	}
 
 	enemySpr.setTexture(enemyTxt);
@@ -47,11 +52,15 @@ void Enemy::setPosY(int posY)
 
 void Enemy::setNewTexture(string imgDir)
 {
-	if (enemyTxt.loadFromFile(imgDir)) {
-		cout << "Enemy Diployed" << endl;
+	try
+	{
+		if (!enemyTxt.loadFromFile(imgDir)) {
+			throw "Error repeating enemy Files";
+		}
 	}
-	else {
-		cout << "Failed loading Enemy";
+	catch (const char * msg)
+	{
+		cout << msg;
 	}
 	
 	enemySpr.setTexture(enemyTxt);

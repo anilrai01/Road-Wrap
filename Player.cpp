@@ -2,11 +2,15 @@
 
 Player::Player(string imgDirectory, int posX, int posY)
 {
-	if (playerTexture.loadFromFile(imgDirectory)) {
-		cout << "Player Loaded on the screen";
+	try
+	{
+		if (!playerTexture.loadFromFile(imgDirectory)) {
+			throw "Error loading Plyer";
+		}
 	}
-	else {
-		cout << "Error Loading Player";
+	catch (const char * msg)
+	{
+		cout << msg;
 	}
 
 	playerSprite.setTexture(playerTexture);
