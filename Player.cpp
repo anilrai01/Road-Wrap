@@ -15,6 +15,7 @@ Player::Player(string imgDirectory, int posX, int posY)
 
 	playerSprite.setTexture(playerTexture);
 	playerSprite.setScale(Vector2f(0.7f, 0.7f));
+	//playerSprite.setRotation(45);
 
 	this->posX = posX;
 	this->posY = posY;
@@ -49,4 +50,34 @@ void Player::movePlayer(char direction)
 		}
 	}
 	playerSprite.setPosition(Vector2f(posX, posY));
+}
+
+float Player::getPosX()
+{
+	return this->posX;
+}
+
+float Player::getPosY()
+{
+	return this->posY;
+}
+
+void Player::collided(char dir)
+{
+	/*
+	if (this->currentDeg < 35) {
+		this->currentDeg += 2;
+	}*/
+	if (dir == 'left') {
+		this->playerSprite.rotate(35);
+	}
+	else {
+		this->playerSprite.rotate(-35);
+	}
+	
+}
+
+void Player::setDeg()
+{
+	this->currentDeg = 0;
 }

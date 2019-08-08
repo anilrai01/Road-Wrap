@@ -6,20 +6,18 @@ using namespace std;
 #include <SFML/Graphics.hpp>
 using namespace sf;
 
+#include<vector>
+
 class Explosion
 {
 public:
-	Explosion() { this->posX = 0; this->posY = 0; };
-	Explosion(float posX, float posY);
-	void drawExplosion(RenderWindow& window);
+	float Frame, speed;
+	Sprite sprite;
+	vector <IntRect> frames;
 
-private:
-	Texture explodeTxt;
-	Sprite explodeSpr;
-	float posX;
-	float posY;
-	float Frame = 0;
-	float animSpeed = 0.5;
-	int frameCount = 192;
+	Explosion() { Frame = 0; speed = 0; };
+	Explosion(Texture &, int, int, int, int, int, float);
+
+	void update();
 };
 

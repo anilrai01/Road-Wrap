@@ -14,6 +14,10 @@ public:
 
 	void drawPlayer(RenderWindow& window);
 	void movePlayer(char direction);
+	float getPosX();
+	float getPosY();
+	void collided(char);
+	void setDeg();
 
 private:
 	Texture playerTexture;
@@ -21,5 +25,6 @@ private:
 	float posX = 0;
 	float posY = 0;
 	float acc = 2.5f;
+	float currentDeg = 0;
 };
 

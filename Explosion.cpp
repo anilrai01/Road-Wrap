@@ -1,27 +1,23 @@
 #include "Explosion.h"
 
-Explosion::Explosion(float posX, float posY)
+void Explosion::update()
 {
-	if (explodeTxt.loadFromFile("images/type_B.png")) {
-		cout << "Player Loaded on the screen";
-	}
-	else {
-		cout << "Error Loading Player";
-	}
-
-	explodeSpr.setTexture(explodeTxt);
-
-	this->posX = posX;
-	this->posY = posY;
+	Frame += speed;
+	int n = frames.size();
+	if (Frame >= n) Frame -= n;
+	if (n > 0) sprite.setTextureRect(frames[int(Frame)]);
 }
 
-void Explosion::drawExplosion(RenderWindow& window)
+Explosion::Explosion(Texture& t, int x, int y, int w, int h, int count, float Speed)
 {
-	Frame += animSpeed;
-	//Repeated Frame set
-	//if (Frame > frameCount) Frame -= frameCount;
-	explodeSpr.setTextureRect(IntRect(int(Frame) * 192, 0, 192, 192));
-	explodeSpr.setPosition(Vector2f(posX, posY));
+	Frame = 0;
+	speed = Speed;
 
-	window.draw(explodeSpr);
+	for (int i = 0; i < count; i++) {
+		frames.push_back(IntRect(x + i * w, y, w, h));
+	}
+
+	sprite.setTexture(t);
+	sprite.setOrigin(w / 2, h / 2);
+	sprite.setTextureRect(frames[0]);
 }
