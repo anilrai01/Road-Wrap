@@ -28,8 +28,8 @@ int main() {
 	//In Game variables for game loop
 	float maxSpeed = 5.0f;
 	float speed = 0;
-	float bgAcc = 0.005f;
-	float bgDcc = 0.005f;
+	float bgAcc = 0.01f;
+	float bgDcc = 0.025f;
 	float BackgroundY1 = 0;
 	float BackgroundY2 = -1080.0f;
 	float BackgroundY3 = -2160.0f;
@@ -41,7 +41,7 @@ int main() {
 	//Collision stats
 	bool collided = false;
 	//Explosion vector
-	vector<Explosion> exp;
+	vector<Explosion> explode;
 
 	RenderWindow window(VideoMode(1920, 1080), "Drift Race", sf::Style::Close | sf::Style::Titlebar);
 	//window.setFramerateLimit(90);
@@ -116,8 +116,6 @@ int main() {
 	enemVect.push_back(Enemy(getRandomImage(), getRandomNumber(925, 1025, 'e'), getRandomNumber(-2200, -2400, 'e'), getRandomNumber(3, 8, 's')));
 	*/
 
-	Explosion explode(bombTxt, 0, 0, 192, 192, 64, 0.25);
-
 	//Loading Window
 	while (window.isOpen()) {
 		Event evnt;
@@ -130,21 +128,22 @@ int main() {
 			}
 		}
 
-		//player movement
-		if (Keyboard::isKeyPressed(Keyboard::Up)) {
-			racer.movePlayer('u');
+		if (!collided) {
+			//player movement
+			if (Keyboard::isKeyPressed(Keyboard::Up)) {
+				racer.movePlayer('u');
+			}
+			if (Keyboard::isKeyPressed(Keyboard::Right)) {
+				racer.movePlayer('r');
+			}
+			if (Keyboard::isKeyPressed(Keyboard::Down)) {
+				racer.movePlayer('d');
+			}
+			if (Keyboard::isKeyPressed(Keyboard::Left)) {
+				racer.movePlayer('l');
+			}
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Right)) {
-			racer.movePlayer('r');
-		}
-		if (Keyboard::isKeyPressed(Keyboard::Down)) {
-			racer.movePlayer('d');
-		}
-		if (Keyboard::isKeyPressed(Keyboard::Left)) {
-			racer.movePlayer('l');
-		}
-
-
+	
 		//Create scrolling background
 		mainBG.setPosition(Vector2f(320.0f, BackgroundY1));
 		mainBG2.setPosition(Vector2f(320.0f, BackgroundY2));
@@ -233,6 +232,7 @@ int main() {
 			{
 				collided = true;
 				cout << "Collided";
+				explode.push_back(Explosion(bombTxt, (int)racer.getPosX() - 60, (int)racer.getPosY() - 40, 192, 192, 64, 0.25));
 			}
 		}
 			/// Player Scratched
@@ -240,12 +240,13 @@ int main() {
 				// Slow start simulation
 				if (speed > 0) {
 					//cout << "True";
-					speed -= bgAcc;
-					explode.sprite.setPosition(racer.getPosX() + 30, racer.getPosY() + 50);
+					speed -= bgDcc;
+					//explode.sprite.setPosition(racer.getPosX() + 30, racer.getPosY() + 50);
 				}
 				else {
 					collided = false;
 					racer.setDeg();
+					explode.pop_back();
 				}
 
 				BackgroundY1 += speed;
@@ -263,18 +264,19 @@ int main() {
 		window.draw(mainBG);
 		window.draw(mainBG2);
 		window.draw(mainBG3);
-
-
 		
 
 		//Render Player Object
 		racer.drawPlayer(window);
 
 		//Explosion
-		explode.update();
-		
-		window.draw(explode.sprite);
+		if (collided) {
+			for (int i = 0; i < explode.size(); i++) {
+				explode[i].update();
 
+				window.draw(explode[i].sprite);
+			}
+		}
 		//Render Enemies
 
 		en1.drawEnemy(window);
