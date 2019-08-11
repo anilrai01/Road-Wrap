@@ -9,7 +9,7 @@ using namespace sf;
 class Player
 {
 public:
-	Player() {};
+	Player(){};
 	Player(string imgDirectory, int posX, int posY);
 
 	void drawPlayer(RenderWindow& window);
@@ -18,6 +18,8 @@ public:
 	float getPosY();
 	void collided(char);
 	void setDeg();
+	int getLife();
+	void setLife(int);
 
 private:
 	Texture playerTexture;
@@ -26,5 +28,6 @@ private:
 	float posY = 0;
 	float acc = 2.5f;
 	float currentDeg = 0;
+	int life = 3;
 };
 

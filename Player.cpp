@@ -14,7 +14,7 @@ Player::Player(string imgDirectory, int posX, int posY)
 	}
 
 	playerSprite.setTexture(playerTexture);
-	playerSprite.setScale(Vector2f(0.7f, 0.7f));
+	playerSprite.setScale(Vector2f(0.6f, 0.6f));
 	//playerSprite.setRotation(45);
 
 	this->posX = posX;
@@ -80,4 +80,14 @@ void Player::collided(char dir)
 void Player::setDeg()
 {
 	this->currentDeg = 0;
+}
+
+int Player::getLife()
+{
+	return this->life;
+}
+
+void Player::setLife(int life)
+{
+	this->life = life;
 }

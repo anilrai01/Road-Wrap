@@ -18,6 +18,8 @@ public:
 	Explosion() { Frame = 0; speed = 0; };
 	Explosion(Texture &, int, int, int, int, int, float);
 
+	bool isEnd();
+
 	void update();
 };
 

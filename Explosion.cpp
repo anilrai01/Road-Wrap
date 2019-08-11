@@ -22,3 +22,8 @@ Explosion::Explosion(Texture& t, int x, int y, int w, int h, int count, float Sp
 	sprite.setPosition(x, y);
 	sprite.setTextureRect(frames[0]);
 }
+
+bool Explosion::isEnd()
+{
+	return Frame + speed >= frames.size();
+}
