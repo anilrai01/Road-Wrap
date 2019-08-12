@@ -6,6 +6,10 @@ using namespace sf;
 #include <iostream>
 using namespace std;
 
+#include <string>
+
+#include <fstream>
+
 #include <cmath>
 
 #include <sstream>
@@ -32,6 +36,8 @@ void setNewPosition(Enemy& enem, int num, int speed);
 
 int main() {
 	//In Game variables for game loop
+	string lineFile;
+	string currentHighScore;
 	float maxSpeed = 5.0f;
 	float speed = 0;
 	float bgAcc = 0.01f;
@@ -42,6 +48,7 @@ int main() {
 	float borderRight = 0;
 	float borderLeft = 705.0f;
 	float score = 0;
+	
 	//Enemy max lim
 	int oppMaxSpeed = 5;
 	//player Collision stats
@@ -58,27 +65,66 @@ int main() {
 	//EnemyExplode Vector
 	vector<Explosion> enemyExplode;
 
-	//Sound Buffer
-	SoundBuffer fireBuffer;
 
+
+	///////Sound Buffer
+	SoundBuffer fireBuffer;
 	//Sound 
 	Sound fireSound;
+	/// Testing Sound
+	if (!fireBuffer.loadFromFile("sounds/bulletShot.wav")) {
+		cout << "Error Loading Sound" << endl;
+	}
 
-	//Fonts
-	Font lineFont, scoreFont;
-	if (!lineFont.loadFromFile("fonts/PaladinsLaser-BERx.otf")) {
+	//Setting Sounds
+	fireSound.setBuffer(fireBuffer);
+
+
+	/////////Fonts
+	Font titleFont, scoreFont, scoreTitleFont, highScoreFont, highScoreTitleFont;
+	if (!titleFont.loadFromFile("fonts/PaladinsLaser-BERx.otf")) {
 		cout << "Error Loading Line Font";
 	}
 	if (!scoreFont.loadFromFile("fonts/PaladinsCondensed-rB77.otf")) {
 		cout << "Error loading Score Font";
 	}
+	if (!scoreTitleFont.loadFromFile("fonts/PaladinsCondensed-rB77.otf")) {
+		cout << "Error loading Score Title file";
+	}
+	if (!highScoreFont.loadFromFile("fonts/PaladinsCondensed-rB77.otf")) {
+		cout << "Error Loading High Score font";
+	}
+	if (!highScoreTitleFont.loadFromFile("fonts/PaladinsCondensed-rB77.otf")) {
+		cout << "Error Loading High Score font";
+	}
+
 
 	//Text
-	Text scoreText;
+	Text scoreText, scoreTitleText, highScoreText, highScoreTitleText, titleText;
 	scoreText.setFont(scoreFont);
+	scoreTitleText.setFont(scoreTitleFont);
+	highScoreText.setFont(highScoreFont);
+	highScoreTitleText.setFont(highScoreTitleFont);
+	titleText.setFont(titleFont);
+	
+
+	scoreText.setPosition(Vector2f(0, 100));
+	highScoreText.setPosition(Vector2f(0, 50));
+
 	//stringstream scores;
+	ifstream file;
+	file.open("highScore.txt");
+	if (!file) {
+		cout << "Error loading Record";
+	}
+	/*
+	while (file >> lineFile) {
+		highScoreText.setString(lineFile);
+	}
+	*/
 
 
+	///////////Texture
 	Texture bg1, bg2, bg3, bgCover, bombTxt, bulletTxt;
 
 	if (bg1.loadFromFile("images/new1.png"))
@@ -131,16 +177,6 @@ int main() {
 	else {
 		cout << "Error loading Cover";
 	}
-
-
-
-	/// Testing Sound
-	if (!fireBuffer.loadFromFile("sounds/bulletShot.wav")) {
-		cout << "Error Loading Sound" << endl;
-	}
-
-	//Setting Sounds
-	fireSound.setBuffer(fireBuffer);
 
 	//Setting up a sprite
 	Sprite mainBG, mainBG2, mainBG3, mainCover;
@@ -195,6 +231,14 @@ int main() {
 		//Display Score
 		//scores << score;
 		//scoreText.setString(scores.str().c_str());
+		highScoreTitleText.setString("Your High Score");
+		while (file >> lineFile) {
+			highScoreText.setString(lineFile);
+
+			currentHighScore = lineFile;
+			//cout << lineFile << endl;
+		}
+		file.close();
 		scoreText.setString(to_string((int)score));
 
 		if (!collided) {
@@ -291,61 +335,66 @@ int main() {
 		}
 
 		// Check collission of bullet and enemy
-		//if (!enemyExplode.empty()) {
+		if (fire) {
 			for (int i = 0; i < bullet.size(); i++) {
 				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en1.getPosX(), en1.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en1.getPosX() - 170, (int)en1.getPosY() - 150, 256, 256, 48, 0.25));
+					
 					setNewPosition(en1, 1, oppMaxSpeed);
 					score += 2;
 				}
 				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en2.getPosX(), en2.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en2.getPosX() - 170, (int)en2.getPosY() - 150, 256, 256, 48, 0.25));
+					
 					setNewPosition(en2, 2, oppMaxSpeed);
 					score += 2;
 				}
 				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en3.getPosX(), en3.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en3.getPosX() - 170, (int)en3.getPosY() - 150, 256, 256, 48, 0.25));
+					
 					setNewPosition(en3, 3, oppMaxSpeed);
 					score += 2;
 				}
 				if(getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en4.getPosX(), en4.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en4.getPosX() - 170, (int)en4.getPosY() - 150, 256, 256, 48, 0.25));
+					
 					setNewPosition(en4, 4, oppMaxSpeed);
 					score += 2;
 				}
 				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en5.getPosX(), en5.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en5.getPosX() - 170, (int)en5.getPosY() - 150, 256, 256, 48, 0.25));
+					
 					setNewPosition(en5, 5, oppMaxSpeed);
 					score += 2;
 				}
 			}
-		//}
+		}
 
 		/// Player Collided
 		if (collided) {
 			// Slow start simulation
 			if (maxSpeed <= 5) {
 				if (speed > 0) {
-					speed -= 0.05;
+					speed -= 0.05f;
 				}
 			}else if (maxSpeed > 5 && maxSpeed <= 7) {
 				if (speed > 0) {
-					speed -= 0.05;
+					speed -= 0.05f;
 				}
 			}
 			else if (maxSpeed > 7 && maxSpeed <= 9) {
 				if (speed > 0) {
-					speed -= 0.07;
+					speed -= 0.07f;
 				}
 			}
 			else if (maxSpeed > 9 && maxSpeed <= 11) {
 				if (speed > 0) {
-					speed -= 0.09;
+					speed -= 0.09f;
 				}
 			}
 
@@ -377,6 +426,8 @@ int main() {
 		//en6.drawEnemy(window);
 
 		//Render Score
+		window.draw(highScoreTitleText);
+		window.draw(highScoreText);
 		window.draw(scoreText);
 
 		//Explosion
@@ -427,6 +478,16 @@ int main() {
 		// Checking Player LifeSpan 
 		if (racer.getLife() <= 0) {
 			cout << "You Died !";
+
+			if (score > stoi(currentHighScore)) {
+				//Storing HIGH SCORE
+				ofstream storeFile;
+				storeFile.open("highScore.txt");
+
+				storeFile << score;
+				storeFile.close();
+			}
+
 			window.close();
 		}
 
