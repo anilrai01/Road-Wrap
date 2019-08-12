@@ -7,5 +7,10 @@ void Bullet::updateBullet()
 
 int Bullet::getPosY()
 {
-	return this->sprite.getPosition().y;
+	return (int)this->sprite.getPosition().y;
+}
+
+int Bullet::getPosX()
+{
+	return (int)this->sprite.getPosition().x;
 }

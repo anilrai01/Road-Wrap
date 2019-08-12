@@ -20,13 +20,15 @@ using namespace std;
 
 #include "Bullet.h"
 
-
 //Creat random Number for game loop
 int getRandomNumber(int a, int b, char ch);
 string getRandomImage();
 
 //Measures distance between any two points in the vertices
 float getDistance(float, float, int, int);
+
+//regenerate
+void setNewPosition(Enemy& enem, int num, int speed);
 
 int main() {
 	//In Game variables for game loop
@@ -42,14 +44,19 @@ int main() {
 	float score = 0;
 	//Enemy max lim
 	int oppMaxSpeed = 5;
-	//Collision stats
+	//player Collision stats
 	bool collided = false;
 	//Bullet stats
 	bool fire = false;
+	//Enemy collision stat
+	bool bulletCollide = false;
+
 	//Explosion vector
 	vector<Explosion> explode;
 	//Bullet Vector
 	vector<Bullet> bullet;
+	//EnemyExplode Vector
+	vector<Explosion> enemyExplode;
 
 	//Sound Buffer
 	SoundBuffer fireBuffer;
@@ -146,7 +153,9 @@ int main() {
 	enemVect.push_back(Enemy(getRandomImage(), getRandomNumber(925, 1025, 'e'), getRandomNumber(-2200, -2400, 'e'), getRandomNumber(3, 8, 's')));
 	*/
 
-	//Loading Window
+
+
+	//Loading Window  main Game LOOP
 	while (window.isOpen()) {
 		Event evnt;
 
@@ -217,37 +226,28 @@ int main() {
 			BackgroundY3 += speed;
 		}
 
+
 		// Regeneration of Enemy
 		//cout << en1.getPosY() << endl;
 
 		if (en1.getPosY() > 1080) {
-			en1.setPosY(getRandomNumber(-1500, -1700, 'e'));
-			en1.setNewTexture(getRandomImage());
-			en1.setSpeed(getRandomNumber(3, oppMaxSpeed, 's'));
+			setNewPosition(en1, 1, oppMaxSpeed);
 			score++;
 		}
 		if (en2.getPosY() > 1080) {
-			en2.setPosY(getRandomNumber(-1800, -2000, 'e'));
-			en2.setNewTexture(getRandomImage());
-			en2.setSpeed(getRandomNumber(3, oppMaxSpeed, 's'));
+			setNewPosition(en2, 2, oppMaxSpeed);
 			score++;
 		}
 		if (en3.getPosY() > 1080) {
-			en3.setPosY(getRandomNumber(-2100, -2300, 'e'));
-			en3.setNewTexture(getRandomImage());
-			en3.setSpeed(getRandomNumber(3, oppMaxSpeed, 's'));
+			setNewPosition(en3, 3, oppMaxSpeed);
 			score++;
 		}
 		if (en4.getPosY() > 1080) {
-			en4.setPosY(getRandomNumber(-2400, -2600, 'e'));
-			en4.setNewTexture(getRandomImage());
-			en4.setSpeed(getRandomNumber(3, oppMaxSpeed, 's'));
+			setNewPosition(en4, 4, oppMaxSpeed);
 			score++;
 		}
 		if (en5.getPosY() > 1080) {
-			en5.setPosY(getRandomNumber(-2700, -2900, 'e'));
-			en5.setNewTexture(getRandomImage());
-			en5.setSpeed(getRandomNumber(3, oppMaxSpeed, 's'));
+			setNewPosition(en5, 5, oppMaxSpeed);
 			score++;
 		}
 
@@ -257,7 +257,7 @@ int main() {
 		if (score > 200 && score < 250) { cout << "Level Up";  maxSpeed = 11; oppMaxSpeed = 11; };
 
 
-		//Check collission
+		//Check collission of player and enemy
 		if (!collided) {
 			if (getDistance(racer.getPosX(), racer.getPosY(), en1.getPosX(), en1.getPosY()) < 60 ||
 				getDistance(racer.getPosX(), racer.getPosY(), en2.getPosX(), en2.getPosY()) < 60 ||
@@ -271,6 +271,37 @@ int main() {
 				racer.setLife(racer.getLife() - 1);
 			}
 		}
+
+		// Check collission of bullet and enemy
+		//if (!enemyExplode.empty()) {
+			for (int i = 0; i < bullet.size(); i++) {
+				if (getDistance(bullet[i].getPosX(), bullet[i].getPosY(), en1.getPosX(), en1.getPosY()) < 60) {
+					bulletCollide = true;
+					enemyExplode.push_back(Explosion(bombTxt, (int)en1.getPosX() - 170, (int)en1.getPosY() - 150, 256, 256, 48, 0.25));
+					setNewPosition(en1, 1, oppMaxSpeed);
+				}
+				if (getDistance(bullet[i].getPosX(), bullet[i].getPosY(), en2.getPosX(), en2.getPosY()) < 60) {
+					bulletCollide = true;
+					enemyExplode.push_back(Explosion(bombTxt, (int)en2.getPosX() - 170, (int)en2.getPosY() - 150, 256, 256, 48, 0.25));
+					setNewPosition(en2, 2, oppMaxSpeed);
+				}
+				if (getDistance(bullet[i].getPosX(), bullet[i].getPosY(), en3.getPosX(), en3.getPosY()) < 60) {
+					bulletCollide = true;
+					enemyExplode.push_back(Explosion(bombTxt, (int)en3.getPosX() - 170, (int)en3.getPosY() - 150, 256, 256, 48, 0.25));
+					setNewPosition(en3, 3, oppMaxSpeed);
+				}
+				if(getDistance(bullet[i].getPosX(), bullet[i].getPosY(), en4.getPosX(), en4.getPosY()) < 60) {
+					bulletCollide = true;
+					enemyExplode.push_back(Explosion(bombTxt, (int)en4.getPosX() - 170, (int)en4.getPosY() - 150, 256, 256, 48, 0.25));
+					setNewPosition(en4, 4, oppMaxSpeed);
+				}
+				if (getDistance(bullet[i].getPosX(), bullet[i].getPosY(), en5.getPosX(), en5.getPosY()) < 60) {
+					bulletCollide = true;
+					enemyExplode.push_back(Explosion(bombTxt, (int)en5.getPosX() - 170, (int)en5.getPosY() - 150, 256, 256, 48, 0.25));
+					setNewPosition(en5, 5, oppMaxSpeed);
+				}
+			}
+		//}
 
 		/// Player Collided
 		if (collided) {
@@ -295,6 +326,16 @@ int main() {
 
 		//Render Player Object
 		racer.drawPlayer(window);
+
+		//Render Enemies
+
+		en1.drawEnemy(window);
+		en2.drawEnemy(window);
+		en3.drawEnemy(window);
+		en4.drawEnemy(window);
+		en5.drawEnemy(window);
+
+		//en6.drawEnemy(window);
 
 		//Explosion
 		if (collided) {
@@ -327,19 +368,26 @@ int main() {
 			}
 		}
 
+		if (bulletCollide) {
+			for (int i = 0; i < enemyExplode.size(); i++) {
+				enemyExplode[i].update();
+				window.draw(enemyExplode[i].sprite);
+
+				if (enemyExplode[i].isEnd()) {
+					enemyExplode.erase(enemyExplode.begin() + 0);
+				}
+			}
+			if (enemyExplode.empty()) {
+				bulletCollide = false;
+			}
+		}
+
 		// Checking Player LifeSpan 
 		if (racer.getLife() <= 0) {
 			cout << "You Died !";
 			window.close();
 		}
-		//Render Enemies
 
-		en1.drawEnemy(window);
-		en2.drawEnemy(window);
-		en3.drawEnemy(window);
-		en4.drawEnemy(window);
-		en5.drawEnemy(window);
-		//en6.drawEnemy(window);
 
 		window.display();
 	}
@@ -372,4 +420,33 @@ string getRandomImage() {
 
 float getDistance(float x1, float y1, int x2, int y2) {
 	return sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
+}
+
+void setNewPosition(Enemy &enem, int num, int speed) {
+	if (num == 1) {
+		enem.setPosY(getRandomNumber(-1500, -1700, 'e'));
+		enem.setNewTexture(getRandomImage());
+		enem.setSpeed(getRandomNumber(3, speed, 's'));
+	}
+	else if (num == 2) {
+		enem.setPosY(getRandomNumber(-1800, -2000, 'e'));
+		enem.setNewTexture(getRandomImage());
+		enem.setSpeed(getRandomNumber(3, speed, 's'));
+	}
+	else if (num == 3) {
+		enem.setPosY(getRandomNumber(-2100, -2300, 'e'));
+		enem.setNewTexture(getRandomImage());
+		enem.setSpeed(getRandomNumber(3, speed, 's'));
+	}
+	else if (num == 4) {
+		enem.setPosY(getRandomNumber(-2400, -2600, 'e'));
+		enem.setNewTexture(getRandomImage());
+		enem.setSpeed(getRandomNumber(3, speed, 's'));
+	}
+	else if (num == 5) {
+		enem.setPosY(getRandomNumber(-2700, -2900, 'e'));
+		enem.setNewTexture(getRandomImage());
+		enem.setSpeed(getRandomNumber(3, speed, 's'));
+	}
+
 }
