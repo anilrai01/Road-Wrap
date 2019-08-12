@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 using namespace sf;
 
+#include <SFML/Audio.hpp>
+
 #include <iostream>
 using namespace std;
 
@@ -15,6 +17,8 @@ using namespace std;
 #include "Enemy.h"
 
 #include "Explosion.h"
+
+#include "Bullet.h"
 
 
 //Creat random Number for game loop
@@ -40,13 +44,23 @@ int main() {
 	int oppMaxSpeed = 5;
 	//Collision stats
 	bool collided = false;
+	//Bullet stats
+	bool fire = false;
 	//Explosion vector
 	vector<Explosion> explode;
+	//Bullet Vector
+	vector<Bullet> bullet;
+
+	//Sound Buffer
+	SoundBuffer fireBuffer;
+
+	//Sound 
+	Sound fireSound;
 
 	RenderWindow window(VideoMode(1920, 1080), "Drift Race", sf::Style::Close | sf::Style::Titlebar);
 	//window.setFramerateLimit(90);
 
-	Texture bg1, bg2, bg3, bgCover, bombTxt;
+	Texture bg1, bg2, bg3, bgCover, bombTxt, bulletTxt;
 
 	if (bg1.loadFromFile("images/new1.png"))
 	{
@@ -90,7 +104,24 @@ int main() {
 	else {
 		cout << "Error loading Cover";
 	}
+	if (bulletTxt.loadFromFile("images/fire_red.png"))
+	{
+		cout << "Bomb Cover loaded Successfully";
+		bulletTxt.setSmooth(true);
+	}
+	else {
+		cout << "Error loading Cover";
+	}
 
+
+
+	/// Testing Sound
+	if (!fireBuffer.loadFromFile("sounds/bulletShot.wav")) {
+		cout << "Error Loading Sound" << endl;
+	}
+
+	//Setting Sounds
+	fireSound.setBuffer(fireBuffer);
 
 	//Setting up a sprite
 	Sprite mainBG, mainBG2, mainBG3, mainCover;
@@ -120,11 +151,23 @@ int main() {
 		Event evnt;
 
 		while (window.pollEvent(evnt)) {
+
 			switch (evnt.type) {
 			case Event::Closed:
 				window.close();
 				break;
+			case Event::KeyPressed:
+				if (evnt.key.code == Keyboard::Space) 
+				{
+					cout << "Fired";
+					fire = true;
+					bullet.push_back(Bullet(bulletTxt, (int)racer.getPosX(), (int)racer.getPosY(), 32, 64, 16, 0.25));
+					fireSound.play();
+				}
+				break;
 			}
+
+			
 		}
 
 		if (!collided) {
@@ -224,7 +267,7 @@ int main() {
 			{
 				collided = true;
 				cout << "Collided";
-				explode.push_back(Explosion(bombTxt, (int)racer.getPosX() - 100, (int)racer.getPosY() - 80, 256, 256, 48, 0.25));
+				explode.push_back(Explosion(bombTxt, (int)racer.getPosX() - 170, (int)racer.getPosY() - 150, 256, 256, 48, 0.25));
 				racer.setLife(racer.getLife() - 1);
 			}
 		}
@@ -267,6 +310,23 @@ int main() {
 				};
 			}
 		}
+
+		if (fire) {
+			for (int i = 0; i < bullet.size(); i++) {
+				bullet[i].update();
+				window.draw(bullet[i].sprite);
+				bullet[i].updateBullet();
+
+				if (bullet[i].getPosY() < 0) {
+					bullet.erase(bullet.begin() + 0);
+				}
+			}
+
+			if (bullet.empty()) {
+				fire = false;
+			}
+		}
+
 		// Checking Player LifeSpan 
 		if (racer.getLife() <= 0) {
 			cout << "You Died !";
