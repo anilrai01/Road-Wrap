@@ -241,7 +241,7 @@ int main() {
 			BackgroundY3 += speed;
 		}
 
-	//Clearing and creating windows
+		//Clearing and creating windows
 		window.clear();
 
 		window.draw(mainCover);
@@ -255,7 +255,7 @@ int main() {
 
 		//Explosion
 		if (collided) {
-			
+
 			for (int i = 0; i < explode.size(); i++) {
 				explode[i].update();
 				window.draw(explode[i].sprite);

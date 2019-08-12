@@ -62,25 +62,6 @@ float Player::getPosY()
 	return this->posY;
 }
 
-void Player::collided(char dir)
-{
-	/*
-	if (this->currentDeg < 35) {
-		this->currentDeg += 2;
-	}*/
-	if (dir == 'left') {
-		this->playerSprite.rotate(35);
-	}
-	else {
-		this->playerSprite.rotate(-35);
-	}
-	
-}
-
-void Player::setDeg()
-{
-	this->currentDeg = 0;
-}
 
 int Player::getLife()
 {

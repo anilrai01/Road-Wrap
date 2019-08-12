@@ -16,8 +16,6 @@ public:
 	void movePlayer(char direction);
 	float getPosX();
 	float getPosY();
-	void collided(char);
-	void setDeg();
 	int getLife();
 	void setLife(int);
 
@@ -27,7 +25,6 @@ private:
 	float posX = 0;
 	float posY = 0;
 	float acc = 2.5f;
-	float currentDeg = 0;
 	int life = 3;
 };
 
