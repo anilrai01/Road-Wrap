@@ -64,8 +64,20 @@ int main() {
 	//Sound 
 	Sound fireSound;
 
-	RenderWindow window(VideoMode(1920, 1080), "Drift Race", sf::Style::Close | sf::Style::Titlebar);
-	//window.setFramerateLimit(90);
+	//Fonts
+	Font lineFont, scoreFont;
+	if (!lineFont.loadFromFile("fonts/PaladinsLaser-BERx.otf")) {
+		cout << "Error Loading Line Font";
+	}
+	if (!scoreFont.loadFromFile("fonts/PaladinsCondensed-rB77.otf")) {
+		cout << "Error loading Score Font";
+	}
+
+	//Text
+	Text scoreText;
+	scoreText.setFont(scoreFont);
+	//stringstream scores;
+
 
 	Texture bg1, bg2, bg3, bgCover, bombTxt, bulletTxt;
 
@@ -154,6 +166,8 @@ int main() {
 	*/
 
 
+	RenderWindow window(VideoMode(1920, 1080), "Drift Race", sf::Style::Close | sf::Style::Titlebar);
+	//window.setFramerateLimit(90);
 
 	//Loading Window  main Game LOOP
 	while (window.isOpen()) {
@@ -178,6 +192,10 @@ int main() {
 
 			
 		}
+		//Display Score
+		//scores << score;
+		//scoreText.setString(scores.str().c_str());
+		scoreText.setString(to_string((int)score));
 
 		if (!collided) {
 			//player movement
@@ -275,31 +293,31 @@ int main() {
 		// Check collission of bullet and enemy
 		//if (!enemyExplode.empty()) {
 			for (int i = 0; i < bullet.size(); i++) {
-				if (getDistance(bullet[i].getPosX(), bullet[i].getPosY(), en1.getPosX(), en1.getPosY()) < 60) {
+				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en1.getPosX(), en1.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en1.getPosX() - 170, (int)en1.getPosY() - 150, 256, 256, 48, 0.25));
 					setNewPosition(en1, 1, oppMaxSpeed);
 					score += 2;
 				}
-				if (getDistance(bullet[i].getPosX(), bullet[i].getPosY(), en2.getPosX(), en2.getPosY()) < 60) {
+				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en2.getPosX(), en2.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en2.getPosX() - 170, (int)en2.getPosY() - 150, 256, 256, 48, 0.25));
 					setNewPosition(en2, 2, oppMaxSpeed);
 					score += 2;
 				}
-				if (getDistance(bullet[i].getPosX(), bullet[i].getPosY(), en3.getPosX(), en3.getPosY()) < 60) {
+				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en3.getPosX(), en3.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en3.getPosX() - 170, (int)en3.getPosY() - 150, 256, 256, 48, 0.25));
 					setNewPosition(en3, 3, oppMaxSpeed);
 					score += 2;
 				}
-				if(getDistance(bullet[i].getPosX(), bullet[i].getPosY(), en4.getPosX(), en4.getPosY()) < 60) {
+				if(getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en4.getPosX(), en4.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en4.getPosX() - 170, (int)en4.getPosY() - 150, 256, 256, 48, 0.25));
 					setNewPosition(en4, 4, oppMaxSpeed);
 					score += 2;
 				}
-				if (getDistance(bullet[i].getPosX(), bullet[i].getPosY(), en5.getPosX(), en5.getPosY()) < 60) {
+				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en5.getPosX(), en5.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en5.getPosX() - 170, (int)en5.getPosY() - 150, 256, 256, 48, 0.25));
 					setNewPosition(en5, 5, oppMaxSpeed);
@@ -357,6 +375,9 @@ int main() {
 		en5.drawEnemy(window);
 
 		//en6.drawEnemy(window);
+
+		//Render Score
+		window.draw(scoreText);
 
 		//Explosion
 		if (collided) {
