@@ -168,7 +168,7 @@ int main() {
 			case Event::KeyPressed:
 				if (evnt.key.code == Keyboard::Space) 
 				{
-					cout << "Fired";
+					//cout << "Fired";
 					fire = true;
 					bullet.push_back(Bullet(bulletTxt, (int)racer.getPosX(), (int)racer.getPosY(), 32, 64, 16, 0.25));
 					fireSound.play();
@@ -252,9 +252,9 @@ int main() {
 		}
 
 		// Game Level
-		if (score > 25 && score < 150) { cout << "Level Up";  maxSpeed = 7; oppMaxSpeed = 7; };
-		if (score > 150 && score < 200) { cout << "Level Up";  maxSpeed = 9; oppMaxSpeed = 9; };
-		if (score > 200 && score < 250) { cout << "Level Up";  maxSpeed = 11; oppMaxSpeed = 11; };
+		if (score > 25 && score < 150) { maxSpeed = 7; oppMaxSpeed = 7; };
+		if (score > 150 && score < 200) { maxSpeed = 9; oppMaxSpeed = 9; };
+		if (score > 200 && score < 250) { maxSpeed = 11; oppMaxSpeed = 11; };
 
 
 		//Check collission of player and enemy
@@ -266,7 +266,7 @@ int main() {
 				getDistance(racer.getPosX(), racer.getPosY(), en5.getPosX(), en5.getPosY()) < 60)
 			{
 				collided = true;
-				cout << "Collided";
+				//cout << "Collided";
 				explode.push_back(Explosion(bombTxt, (int)racer.getPosX() - 170, (int)racer.getPosY() - 150, 256, 256, 48, 0.25));
 				racer.setLife(racer.getLife() - 1);
 			}
@@ -279,26 +279,31 @@ int main() {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en1.getPosX() - 170, (int)en1.getPosY() - 150, 256, 256, 48, 0.25));
 					setNewPosition(en1, 1, oppMaxSpeed);
+					score += 2;
 				}
 				if (getDistance(bullet[i].getPosX(), bullet[i].getPosY(), en2.getPosX(), en2.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en2.getPosX() - 170, (int)en2.getPosY() - 150, 256, 256, 48, 0.25));
 					setNewPosition(en2, 2, oppMaxSpeed);
+					score += 2;
 				}
 				if (getDistance(bullet[i].getPosX(), bullet[i].getPosY(), en3.getPosX(), en3.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en3.getPosX() - 170, (int)en3.getPosY() - 150, 256, 256, 48, 0.25));
 					setNewPosition(en3, 3, oppMaxSpeed);
+					score += 2;
 				}
 				if(getDistance(bullet[i].getPosX(), bullet[i].getPosY(), en4.getPosX(), en4.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en4.getPosX() - 170, (int)en4.getPosY() - 150, 256, 256, 48, 0.25));
 					setNewPosition(en4, 4, oppMaxSpeed);
+					score += 2;
 				}
 				if (getDistance(bullet[i].getPosX(), bullet[i].getPosY(), en5.getPosX(), en5.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en5.getPosX() - 170, (int)en5.getPosY() - 150, 256, 256, 48, 0.25));
 					setNewPosition(en5, 5, oppMaxSpeed);
+					score += 2;
 				}
 			}
 		//}
@@ -306,8 +311,24 @@ int main() {
 		/// Player Collided
 		if (collided) {
 			// Slow start simulation
-			if (speed > 0) {
-				speed -= bgDcc;
+			if (maxSpeed <= 5) {
+				if (speed > 0) {
+					speed -= 0.05;
+				}
+			}else if (maxSpeed > 5 && maxSpeed <= 7) {
+				if (speed > 0) {
+					speed -= 0.05;
+				}
+			}
+			else if (maxSpeed > 7 && maxSpeed <= 9) {
+				if (speed > 0) {
+					speed -= 0.07;
+				}
+			}
+			else if (maxSpeed > 9 && maxSpeed <= 11) {
+				if (speed > 0) {
+					speed -= 0.09;
+				}
 			}
 
 			BackgroundY1 += speed;
