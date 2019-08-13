@@ -13,4 +13,3 @@ public:
 	int getPosY();
 	int getPosX();
 };
-

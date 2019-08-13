@@ -45,6 +45,7 @@ int main() {
 	float BackgroundY1 = 0;
 	float BackgroundY2 = -1080.0f;
 	float BackgroundY3 = -2160.0f;
+	float BackgroundY4 = -3240.0f;
 	float borderRight = 0;
 	float borderLeft = 705.0f;
 	float score = 0;
@@ -81,20 +82,11 @@ int main() {
 
 
 	/////////Fonts
-	Font titleFont, scoreFont, scoreTitleFont, highScoreFont, highScoreTitleFont;
-	if (!titleFont.loadFromFile("fonts/PaladinsLaser-BERx.otf")) {
-		cout << "Error Loading Line Font";
-	}
+	Font scoreFont, highScoreFont;
 	if (!scoreFont.loadFromFile("fonts/PaladinsCondensed-rB77.otf")) {
 		cout << "Error loading Score Font";
 	}
-	if (!scoreTitleFont.loadFromFile("fonts/PaladinsCondensed-rB77.otf")) {
-		cout << "Error loading Score Title file";
-	}
 	if (!highScoreFont.loadFromFile("fonts/PaladinsCondensed-rB77.otf")) {
-		cout << "Error Loading High Score font";
-	}
-	if (!highScoreTitleFont.loadFromFile("fonts/PaladinsCondensed-rB77.otf")) {
 		cout << "Error Loading High Score font";
 	}
 
@@ -102,14 +94,12 @@ int main() {
 	//Text
 	Text scoreText, scoreTitleText, highScoreText, highScoreTitleText, titleText;
 	scoreText.setFont(scoreFont);
-	scoreTitleText.setFont(scoreTitleFont);
 	highScoreText.setFont(highScoreFont);
-	highScoreTitleText.setFont(highScoreTitleFont);
-	titleText.setFont(titleFont);
-	
 
-	scoreText.setPosition(Vector2f(0, 100));
-	highScoreText.setPosition(Vector2f(0, 50));
+	scoreText.setPosition(Vector2f(1250.0f, 100.0f));
+	scoreText.setFillColor(Color::Black);
+	highScoreText.setPosition(Vector2f(640.0f, 100.0f));
+	highScoreText.setFillColor(Color::Black);
 
 	//stringstream scores;
 	ifstream file;
@@ -117,15 +107,9 @@ int main() {
 	if (!file) {
 		cout << "Error loading Record";
 	}
-	/*
-	while (file >> lineFile) {
-		highScoreText.setString(lineFile);
-	}
-	*/
-
 
 	///////////Texture
-	Texture bg1, bg2, bg3, bgCover, bombTxt, bulletTxt;
+	Texture bg1, bg2, bg3, bg4, bgCover, bombTxt, bulletTxt, scoreBoardTxt;
 
 	if (bg1.loadFromFile("images/new1.png"))
 	{
@@ -152,8 +136,16 @@ int main() {
 	else {
 		cout << "Error Loading File 3" << endl;
 	}
+	if (bg4.loadFromFile("images/new4.png"))
+	{
+		cout << "File 4 Loaded Successfully" << endl;
+		bg4.setSmooth(true);
+	}
+	else {
+		cout << "Error Loading File 3" << endl;
+	}
 
-	if (bgCover.loadFromFile("images/newBg.png"))
+	if (bgCover.loadFromFile("images/backupBG.png"))
 	{
 		cout << "Files Cover loaded Successfully";
 		bgCover.setSmooth(true);
@@ -177,17 +169,30 @@ int main() {
 	else {
 		cout << "Error loading Cover";
 	}
+	if (scoreBoardTxt.loadFromFile("images/scoreBoard.png"))
+	{
+		cout << "Score Board Successfully";
+		bulletTxt.setSmooth(true);
+	}
+	else {
+		cout << "Error loading Cover";
+	}
 
 	//Setting up a sprite
-	Sprite mainBG, mainBG2, mainBG3, mainCover;
+	Sprite mainBG, mainBG2, mainBG3, mainBG4, mainCover, scoreBoard;
 	mainBG.setTexture(bg1);
 	mainBG2.setTexture(bg2);
 	mainBG3.setTexture(bg3);
+	mainBG4.setTexture(bg4);
 	mainCover.setTexture(bgCover);
+	scoreBoard.setTexture(scoreBoardTxt);
 	//bombSpr.setTexture(bombTxt);
 
 	//Player Object
 	Player racer("images/Car.png", 985, 900);
+
+	//ScoreBoard
+	scoreBoard.setPosition(Vector2f(501.0f,0));
 
 	//Enemies Objects
 	Enemy en1(getRandomImage(), getRandomNumber(705, 805, 'e'), getRandomNumber(-1500, -1700, 'e'), getRandomNumber(3, 8, 's'));
@@ -228,17 +233,15 @@ int main() {
 
 			
 		}
-		//Display Score
-		//scores << score;
-		//scoreText.setString(scores.str().c_str());
-		highScoreTitleText.setString("Your High Score");
+		//Showing High Score from file
 		while (file >> lineFile) {
 			highScoreText.setString(lineFile);
 
-			currentHighScore = lineFile;
+			//currentHighScore = lineFile;
 			//cout << lineFile << endl;
 		}
-		file.close();
+//		file.close();
+
 		scoreText.setString(to_string((int)score));
 
 		if (!collided) {
@@ -258,21 +261,25 @@ int main() {
 		}
 
 		//Create scrolling background
-		mainBG.setPosition(Vector2f(320.0f, BackgroundY1));
-		mainBG2.setPosition(Vector2f(320.0f, BackgroundY2));
-		mainBG3.setPosition(Vector2f(320.0f, BackgroundY3));
+		mainBG.setPosition(Vector2f(0, BackgroundY1));
+		mainBG2.setPosition(Vector2f(0, BackgroundY2));
+		mainBG3.setPosition(Vector2f(0, BackgroundY3));
+		mainBG4.setPosition(Vector2f(0, BackgroundY4));
 		//Cover up
-		mainCover.setPosition(Vector2f(320.0f, 0));
+		mainCover.setPosition(Vector2f(0, 0));
 
 		if (mainBG.getPosition().y >= 1080)
 		{
-			BackgroundY1 = -2160.0f;
+			BackgroundY1 = -3240.0f;
 		}
 		if (mainBG2.getPosition().y >= 1080) {
-			BackgroundY2 = -2160.0f;
+			BackgroundY2 = -3240.0f;
 		}
 		if (mainBG3.getPosition().y >= 1080) {
-			BackgroundY3 = -2160.0f;
+			BackgroundY3 = -3240.0f;
+		}
+		if (mainBG4.getPosition().y >= 1080) {
+			BackgroundY4 = -3240.0f;
 		}
 
 		//If not collided
@@ -286,6 +293,7 @@ int main() {
 			BackgroundY1 += speed;
 			BackgroundY2 += speed;
 			BackgroundY3 += speed;
+			BackgroundY4 += speed;
 		}
 
 
@@ -401,6 +409,7 @@ int main() {
 			BackgroundY1 += speed;
 			BackgroundY2 += speed;
 			BackgroundY3 += speed;
+			BackgroundY4 += speed;
 		}
 
 		//Clearing and creating windows
@@ -410,6 +419,7 @@ int main() {
 		window.draw(mainBG);
 		window.draw(mainBG2);
 		window.draw(mainBG3);
+		window.draw(mainBG4);
 
 
 		//Render Player Object
@@ -425,8 +435,10 @@ int main() {
 
 		//en6.drawEnemy(window);
 
+		//Render ScoreBoard
+		window.draw(scoreBoard);
+
 		//Render Score
-		window.draw(highScoreTitleText);
 		window.draw(highScoreText);
 		window.draw(scoreText);
 
