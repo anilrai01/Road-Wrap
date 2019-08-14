@@ -16,6 +16,8 @@ using namespace std;
 
 #include <vector>
 
+#include "Animation.h"
+
 #include "Player.h"
 
 #include "Enemy.h"
@@ -24,15 +26,24 @@ using namespace std;
 
 #include "Bullet.h"
 
+#include "Coin.h"
+
 //Creat random Number for game loop
 int getRandomNumber(int a, int b, char ch);
+
 string getRandomImage();
 
 //Measures distance between any two points in the vertices
 float getDistance(float, float, int, int);
 
-//regenerate
-void setNewPosition(Enemy& enem, int num, int speed);
+//regenerate enemy
+void setEnemNewPosition(Enemy& enem, int num, int speed);
+
+//respawn coin
+void setCoinNewPosition(Coin& , int );
+
+// DISTANCE BETWEEN COIN AND PLAYER
+int getCPdistance(Coin& , Player& );
 
 int main() {
 	//In Game variables for game loop
@@ -65,21 +76,25 @@ int main() {
 	vector<Bullet> bullet;
 	//EnemyExplode Vector
 	vector<Explosion> enemyExplode;
+	//Coin vector
+	vector<Coin> coinVect;
 
 
 
 	///////Sound Buffer
-	SoundBuffer fireBuffer;
+	SoundBuffer fireBuffer, coinPick;
 	//Sound 
-	Sound fireSound;
+	Sound fireSound, coinSound;
 	/// Testing Sound
 	if (!fireBuffer.loadFromFile("sounds/bulletShot.wav")) {
 		cout << "Error Loading Sound" << endl;
 	}
-
+	if (!coinPick.loadFromFile("sounds/Pickup_Coin.wav")) {
+		cout << "Error Loading Sound" << endl;
+	}
 	//Setting Sounds
 	fireSound.setBuffer(fireBuffer);
-
+	coinSound.setBuffer(coinPick);
 
 	/////////Fonts
 	Font scoreFont, highScoreFont;
@@ -109,7 +124,7 @@ int main() {
 	}
 
 	///////////Texture
-	Texture bg1, bg2, bg3, bg4, bgCover, bombTxt, bulletTxt, scoreBoardTxt;
+	Texture bg1, bg2, bg3, bg4, bgCover, bombTxt, bulletTxt, scoreBoardTxt, coinTexture;
 
 	if (bg1.loadFromFile("images/new1.png"))
 	{
@@ -147,7 +162,7 @@ int main() {
 
 	if (bgCover.loadFromFile("images/backupBG.png"))
 	{
-		cout << "Files Cover loaded Successfully";
+		cout << "Files Cover loaded Successfully" << endl;
 		bgCover.setSmooth(true);
 	}
 	else {
@@ -155,7 +170,7 @@ int main() {
 	}
 	if (bombTxt.loadFromFile("images/type_C.png"))
 	{
-		cout << "Bomb Cover loaded Successfully";
+		cout << "Bomb Cover loaded Successfully" <<endl;
 		bombTxt.setSmooth(true);
 	}
 	else {
@@ -163,7 +178,7 @@ int main() {
 	}
 	if (bulletTxt.loadFromFile("images/fire_red.png"))
 	{
-		cout << "Bomb Cover loaded Successfully";
+		cout << "Gun Fire loaded Successfully" <<endl;
 		bulletTxt.setSmooth(true);
 	}
 	else {
@@ -171,11 +186,20 @@ int main() {
 	}
 	if (scoreBoardTxt.loadFromFile("images/scoreBoard.png"))
 	{
-		cout << "Score Board Successfully";
+		cout << "Score Board Loaded Successfully" << endl;
 		bulletTxt.setSmooth(true);
 	}
 	else {
 		cout << "Error loading Cover";
+	}
+
+	if (coinTexture.loadFromFile("images/coins.png"))
+	{
+		cout << "Coins Loaded Successfully" << endl;
+		coinTexture.setSmooth(true);
+	}
+	else {
+		cout << "Error loading Coiin";
 	}
 
 	//Setting up a sprite
@@ -186,11 +210,20 @@ int main() {
 	mainBG4.setTexture(bg4);
 	mainCover.setTexture(bgCover);
 	scoreBoard.setTexture(scoreBoardTxt);
+
 	//bombSpr.setTexture(bombTxt);
 
 	//Player Object
-	Player racer("images/Car.png", 985, 900);
+	Player racer("images/Car.png", 985.0f, 900.0f);
 
+	//Coin Objects
+	coinVect.push_back(Coin(coinTexture, getRandomNumber(705, 805, 'c'), getRandomNumber(-1500, -1700, 'c'), 60, 60, 10, 0.1));
+	coinVect.push_back(Coin(coinTexture, getRandomNumber(855, 955, 'c'), getRandomNumber(-2700, -2900, 'c'), 60, 60, 10, 0.1));
+	coinVect.push_back(Coin(coinTexture, getRandomNumber(1005, 1055, 'c'), getRandomNumber(-3900, -4100, 'c'), 60, 60, 10, 0.1));
+	coinVect.push_back(Coin(coinTexture, getRandomNumber(1105, 1155, 'c'), getRandomNumber(-5100, -5300, 'c'), 60, 60, 10, 0.1));
+	coinVect.push_back(Coin(coinTexture, getRandomNumber(1205, 1255, 'c'), getRandomNumber(-6300, -6500, 'c'), 60, 60, 10, 0.1));
+	
+	Coin cc(coinTexture, 0, 0, 60, 60, 10, 0.1);
 	//ScoreBoard
 	scoreBoard.setPosition(Vector2f(501.0f,0));
 
@@ -237,7 +270,8 @@ int main() {
 		while (file >> lineFile) {
 			highScoreText.setString(lineFile);
 
-			//currentHighScore = lineFile;
+			//Store score from file
+			currentHighScore = lineFile;
 			//cout << lineFile << endl;
 		}
 //		file.close();
@@ -301,24 +335,24 @@ int main() {
 		//cout << en1.getPosY() << endl;
 
 		if (en1.getPosY() > 1080) {
-			setNewPosition(en1, 1, oppMaxSpeed);
-			score++;
+			setEnemNewPosition(en1, 1, oppMaxSpeed);
+//			score++;
 		}
 		if (en2.getPosY() > 1080) {
-			setNewPosition(en2, 2, oppMaxSpeed);
-			score++;
+			setEnemNewPosition(en2, 2, oppMaxSpeed);
+//			score++;
 		}
 		if (en3.getPosY() > 1080) {
-			setNewPosition(en3, 3, oppMaxSpeed);
-			score++;
+			setEnemNewPosition(en3, 3, oppMaxSpeed);
+//			score++;
 		}
 		if (en4.getPosY() > 1080) {
-			setNewPosition(en4, 4, oppMaxSpeed);
-			score++;
+			setEnemNewPosition(en4, 4, oppMaxSpeed);
+//			score++;
 		}
 		if (en5.getPosY() > 1080) {
-			setNewPosition(en5, 5, oppMaxSpeed);
-			score++;
+			setEnemNewPosition(en5, 5, oppMaxSpeed);
+//			score++;
 		}
 
 		// Game Level
@@ -342,6 +376,8 @@ int main() {
 			}
 		}
 
+		/////////////////////////////////////////////////
+		///////////////// BULLET COLLISION /////////////
 		// Check collission of bullet and enemy
 		if (fire) {
 			for (int i = 0; i < bullet.size(); i++) {
@@ -349,40 +385,42 @@ int main() {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en1.getPosX() - 170, (int)en1.getPosY() - 150, 256, 256, 48, 0.25));
 					
-					setNewPosition(en1, 1, oppMaxSpeed);
-					score += 2;
+					setEnemNewPosition(en1, 1, oppMaxSpeed);
+					score += 1;
 				}
 				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en2.getPosX(), en2.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en2.getPosX() - 170, (int)en2.getPosY() - 150, 256, 256, 48, 0.25));
 					
-					setNewPosition(en2, 2, oppMaxSpeed);
-					score += 2;
+					setEnemNewPosition(en2, 2, oppMaxSpeed);
+					score += 1;
 				}
 				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en3.getPosX(), en3.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en3.getPosX() - 170, (int)en3.getPosY() - 150, 256, 256, 48, 0.25));
 					
-					setNewPosition(en3, 3, oppMaxSpeed);
-					score += 2;
+					setEnemNewPosition(en3, 3, oppMaxSpeed);
+					score += 1;
 				}
 				if(getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en4.getPosX(), en4.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en4.getPosX() - 170, (int)en4.getPosY() - 150, 256, 256, 48, 0.25));
 					
-					setNewPosition(en4, 4, oppMaxSpeed);
-					score += 2;
+					setEnemNewPosition(en4, 4, oppMaxSpeed);
+					score += 1;
 				}
 				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en5.getPosX(), en5.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en5.getPosX() - 170, (int)en5.getPosY() - 150, 256, 256, 48, 0.25));
 					
-					setNewPosition(en5, 5, oppMaxSpeed);
-					score += 2;
+					setEnemNewPosition(en5, 5, oppMaxSpeed);
+					score += 1;
 				}
 			}
 		}
 
+		/////////////////////////////////////////////////
+		///////////////// PLAYER COLLISION /////////////
 		/// Player Collided
 		if (collided) {
 			// Slow start simulation
@@ -412,6 +450,34 @@ int main() {
 			BackgroundY4 += speed;
 		}
 
+		
+		///////////////////////////////////////////////
+		///////////////////////////////////////////////
+		/////////////// COIN COLLISION ///////////////
+		///////////////////////////////////////////////
+		///////////////////////////////////////////////
+		for (int i = 0; i < coinVect.size(); i++)
+		{
+			if (getCPdistance(coinVect[i], racer) < 60) {
+				coinSound.play();
+				setCoinNewPosition(coinVect[i], i);
+				score += 2;
+			}
+		}
+
+
+
+		
+		/////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////
+		//////////////////////////// Drawing Session ////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////
+		
 		//Clearing and creating windows
 		window.clear();
 
@@ -421,26 +487,27 @@ int main() {
 		window.draw(mainBG3);
 		window.draw(mainBG4);
 
-
 		//Render Player Object
 		racer.drawPlayer(window);
 
 		//Render Enemies
-
 		en1.drawEnemy(window);
 		en2.drawEnemy(window);
 		en3.drawEnemy(window);
 		en4.drawEnemy(window);
 		en5.drawEnemy(window);
-
 		//en6.drawEnemy(window);
 
-		//Render ScoreBoard
-		window.draw(scoreBoard);
 
-		//Render Score
-		window.draw(highScoreText);
-		window.draw(scoreText);
+		//Render Coin
+		for (int i = 0; i < coinVect.size(); i++) {
+			coinVect[i].update();
+			window.draw(coinVect[i].sprite);
+			coinVect[i].updateCoin();
+		}
+		
+		cc.update();
+		window.draw(cc.sprite);
 
 		//Explosion
 		if (collided) {
@@ -487,6 +554,17 @@ int main() {
 			}
 		}
 
+
+		///////////////////////////
+		//Render ScoreBoard
+		window.draw(scoreBoard);
+
+		//Render Score
+		window.draw(highScoreText);
+		window.draw(scoreText);
+
+		//////////////////////////
+
 		// Checking Player LifeSpan 
 		if (racer.getLife() <= 0) {
 			cout << "You Died !";
@@ -508,6 +586,10 @@ int main() {
 	}
 }
 
+//// e = enemy
+//// i = image
+//// s = speed
+//// c = coin
 int getRandomNumber(int a, int b, char ch)
 {
 	static bool first = true; if (first) { srand(time(NULL)); first = false; }
@@ -516,7 +598,7 @@ int getRandomNumber(int a, int b, char ch)
 		result = (result / 10) * 10;
 		return result;
 	}
-	else if (ch == 'i' || ch == 's') {
+	else if (ch == 'i' || ch == 's' || ch == 'c') {
 		return result;
 	}
 	return result;
@@ -537,7 +619,7 @@ float getDistance(float x1, float y1, int x2, int y2) {
 	return sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
 }
 
-void setNewPosition(Enemy &enem, int num, int speed) {
+void setEnemNewPosition(Enemy &enem, int num, int speed) {
 	if (num == 1) {
 		enem.setPosY(getRandomNumber(-1500, -1700, 'e'));
 		enem.setNewTexture(getRandomImage());
@@ -564,4 +646,26 @@ void setNewPosition(Enemy &enem, int num, int speed) {
 		enem.setSpeed(getRandomNumber(3, speed, 's'));
 	}
 
+}
+
+int getCPdistance(Coin& c, Player& p) {
+	return sqrt(pow((p.getPosX() - c.getPosX()),2) + pow((p.getPosY() - c.getPosY()),2));
+}
+
+void setCoinNewPosition(Coin& coin, int num) {
+	if (num == 0) {
+		coin.setNewPos(getRandomNumber(705, 805, 'c'), getRandomNumber(-1500, -1700, 'c'));
+	}
+	else if (num == 1) {
+		coin.setNewPos(getRandomNumber(855, 955, 'c'), getRandomNumber(-2700, -2900, 'c'));
+	}
+	else if (num == 2) {
+		coin.setNewPos(getRandomNumber(1005, 1055, 'c'), getRandomNumber(-3900, -4100, 'c'));
+	}
+	else if (num == 3) {
+		coin.setNewPos(getRandomNumber(1105, 1155, 'c'), getRandomNumber(-5100, -5300, 'c'));
+	}
+	else if (num == 4) {
+		coin.setNewPos(getRandomNumber(1205, 1255, 'c'), getRandomNumber(-6300, -6500, 'c'));
+	}
 }

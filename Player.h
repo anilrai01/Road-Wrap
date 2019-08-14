@@ -9,8 +9,8 @@ using namespace sf;
 class Player
 {
 public:
-	Player(){};
-	Player(string imgDirectory, int posX, int posY);
+	Player() {};
+	Player(string imgDirectory, float posX, float posY);
 
 	void drawPlayer(RenderWindow& window);
 	void movePlayer(char direction);
@@ -27,4 +27,3 @@ private:
 	float acc = 2.5f;
 	int life = 3;
 };
-

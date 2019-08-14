@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(string imgDirectory, int posX, int posY)
+Player::Player(string imgDirectory, float posX, float posY)
 {
 	try
 	{
@@ -8,7 +8,7 @@ Player::Player(string imgDirectory, int posX, int posY)
 			throw "Error loading Plyer";
 		}
 	}
-	catch (const char * msg)
+	catch (const char* msg)
 	{
 		cout << msg;
 	}
