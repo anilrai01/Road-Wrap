@@ -57,6 +57,7 @@ int main() {
 	float BackgroundY2 = -1080.0f;
 	float BackgroundY3 = -2160.0f;
 	float BackgroundY4 = -3240.0f;
+	float BackgroundY5 = -4320.0f;
 	float borderRight = 0;
 	float borderLeft = 705.0f;
 	float score = 0;
@@ -124,7 +125,7 @@ int main() {
 	}
 
 	///////////Texture
-	Texture bg1, bg2, bg3, bg4, bgCover, bombTxt, bulletTxt, scoreBoardTxt, coinTexture;
+	Texture bg1, bg2, bg3, bg4, bg5, bgCover, bombTxt, bulletTxt, scoreBoardTxt, coinTexture;
 
 	if (bg1.loadFromFile("images/new1.png"))
 	{
@@ -157,7 +158,15 @@ int main() {
 		bg4.setSmooth(true);
 	}
 	else {
-		cout << "Error Loading File 3" << endl;
+		cout << "Error Loading File 4" << endl;
+	}
+	if (bg5.loadFromFile("images/new5.png"))
+	{
+		cout << "File 5 Loaded Successfully" << endl;
+		bg5.setSmooth(true);
+	}
+	else {
+		cout << "Error Loading File 5" << endl;
 	}
 
 	if (bgCover.loadFromFile("images/backupBG.png"))
@@ -203,11 +212,12 @@ int main() {
 	}
 
 	//Setting up a sprite
-	Sprite mainBG, mainBG2, mainBG3, mainBG4, mainCover, scoreBoard;
+	Sprite mainBG, mainBG2, mainBG3, mainBG4, mainBG5, mainCover, scoreBoard;
 	mainBG.setTexture(bg1);
 	mainBG2.setTexture(bg2);
 	mainBG3.setTexture(bg3);
 	mainBG4.setTexture(bg4);
+	mainBG5.setTexture(bg5);
 	mainCover.setTexture(bgCover);
 	scoreBoard.setTexture(scoreBoardTxt);
 
@@ -299,23 +309,28 @@ int main() {
 		mainBG2.setPosition(Vector2f(0, BackgroundY2));
 		mainBG3.setPosition(Vector2f(0, BackgroundY3));
 		mainBG4.setPosition(Vector2f(0, BackgroundY4));
+		mainBG5.setPosition(Vector2f(0, BackgroundY5));
 		//Cover up
 		mainCover.setPosition(Vector2f(0, 0));
 
 		if (mainBG.getPosition().y >= 1080)
 		{
-			BackgroundY1 = -3240.0f;
+			BackgroundY1 = -4320.0f;
 		}
 		if (mainBG2.getPosition().y >= 1080) {
-			BackgroundY2 = -3240.0f;
+			BackgroundY2 = -4320.0f;
 		}
 		if (mainBG3.getPosition().y >= 1080) {
-			BackgroundY3 = -3240.0f;
+			BackgroundY3 = -4320.0f;
 		}
 		if (mainBG4.getPosition().y >= 1080) {
-			BackgroundY4 = -3240.0f;
+			BackgroundY4 = -4320.0f;
 		}
-
+		if (mainBG5.getPosition().y >= 1080) {
+			BackgroundY5 = -4320.0f;
+		}
+		/////////////////////////////////////////////////
+		///////////////// PLAYER COLLISION /////////////
 		//If not collided
 		if (!collided) {
 			// Slow start simulation
@@ -328,6 +343,39 @@ int main() {
 			BackgroundY2 += speed;
 			BackgroundY3 += speed;
 			BackgroundY4 += speed;
+			BackgroundY5 += speed;
+		}
+		/////////////////////////////////////////////////
+		///////////////// PLAYER COLLISION /////////////
+		/// Player Collided
+		if (collided) {
+			// Slow start simulation
+			if (maxSpeed <= 5) {
+				if (speed > 0) {
+					speed -= 0.05f;
+				}
+			}
+			else if (maxSpeed > 5 && maxSpeed <= 7) {
+				if (speed > 0) {
+					speed -= 0.05f;
+				}
+			}
+			else if (maxSpeed > 7 && maxSpeed <= 9) {
+				if (speed > 0) {
+					speed -= 0.07f;
+				}
+			}
+			else if (maxSpeed > 9 && maxSpeed <= 11) {
+				if (speed > 0) {
+					speed -= 0.09f;
+				}
+			}
+
+			BackgroundY1 += speed;
+			BackgroundY2 += speed;
+			BackgroundY3 += speed;
+			BackgroundY4 += speed;
+			BackgroundY5 += speed;
 		}
 
 
@@ -419,36 +467,6 @@ int main() {
 			}
 		}
 
-		/////////////////////////////////////////////////
-		///////////////// PLAYER COLLISION /////////////
-		/// Player Collided
-		if (collided) {
-			// Slow start simulation
-			if (maxSpeed <= 5) {
-				if (speed > 0) {
-					speed -= 0.05f;
-				}
-			}else if (maxSpeed > 5 && maxSpeed <= 7) {
-				if (speed > 0) {
-					speed -= 0.05f;
-				}
-			}
-			else if (maxSpeed > 7 && maxSpeed <= 9) {
-				if (speed > 0) {
-					speed -= 0.07f;
-				}
-			}
-			else if (maxSpeed > 9 && maxSpeed <= 11) {
-				if (speed > 0) {
-					speed -= 0.09f;
-				}
-			}
-
-			BackgroundY1 += speed;
-			BackgroundY2 += speed;
-			BackgroundY3 += speed;
-			BackgroundY4 += speed;
-		}
 
 		
 		///////////////////////////////////////////////
@@ -486,6 +504,7 @@ int main() {
 		window.draw(mainBG2);
 		window.draw(mainBG3);
 		window.draw(mainBG4);
+		window.draw(mainBG5);
 
 		//Render Player Object
 		racer.drawPlayer(window);
