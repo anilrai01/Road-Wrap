@@ -28,6 +28,8 @@ using namespace std;
 
 #include "Coin.h"
 
+#include "Obstacle.h"
+
 //Creat random Number for game loop
 int getRandomNumber(int a, int b, char ch);
 
@@ -79,6 +81,8 @@ int main() {
 	vector<Explosion> enemyExplode;
 	//Coin vector
 	vector<Coin> coinVect;
+	//Obstacle Vector
+	vector<Obstacle> obsVect;
 
 
 
@@ -125,7 +129,7 @@ int main() {
 	}
 
 	///////////Texture
-	Texture bg1, bg2, bg3, bg4, bg5, bgCover, bombTxt, bulletTxt, scoreBoardTxt, coinTexture;
+	Texture bg1, bg2, bg3, bg4, bg5, bgCover, bombTxt, bulletTxt, scoreBoardTxt, coinTexture, obs1Txt, obs2Txt, obs3Txt, obs4Txt;
 
 	if (bg1.loadFromFile("images/new1.png"))
 	{
@@ -210,6 +214,39 @@ int main() {
 	else {
 		cout << "Error loading Coiin";
 	}
+	/////OBSTACLES
+	if (obs1Txt.loadFromFile("images/barrel.png"))
+	{
+		cout << "Barrel Loaded Successfully" << endl;
+		coinTexture.setSmooth(true);
+	}
+	else {
+		cout << "Error loading Barrel";
+	}
+	if (obs2Txt.loadFromFile("images/block.png"))
+	{
+		cout << "Block Loaded Successfully" << endl;
+		coinTexture.setSmooth(true);
+	}
+	else {
+		cout << "Error loading Block";
+	}
+	if (obs3Txt.loadFromFile("images/barrel.png"))
+	{
+		cout << "Barrel Loaded Successfully" << endl;
+		coinTexture.setSmooth(true);
+	}
+	else {
+		cout << "Error loading Barrel";
+	}
+	if (obs4Txt.loadFromFile("images/block.png"))
+	{
+		cout << "Block Loaded Successfully" << endl;
+		coinTexture.setSmooth(true);
+	}
+	else {
+		cout << "Error loading Block";
+	}
 
 	//Setting up a sprite
 	Sprite mainBG, mainBG2, mainBG3, mainBG4, mainBG5, mainCover, scoreBoard;
@@ -223,9 +260,11 @@ int main() {
 
 	//bombSpr.setTexture(bombTxt);
 
+	///////////////////////////////////
 	//Player Object
 	Player racer("images/Car.png", 985.0f, 900.0f);
 
+	///////////////////////////////////
 	//Coin Objects
 	coinVect.push_back(Coin(coinTexture, getRandomNumber(705, 805, 'c'), getRandomNumber(-1500, -1700, 'c'), 60, 60, 10, 0.1));
 	coinVect.push_back(Coin(coinTexture, getRandomNumber(855, 955, 'c'), getRandomNumber(-2700, -2900, 'c'), 60, 60, 10, 0.1));
@@ -233,21 +272,25 @@ int main() {
 	coinVect.push_back(Coin(coinTexture, getRandomNumber(1105, 1155, 'c'), getRandomNumber(-5100, -5300, 'c'), 60, 60, 10, 0.1));
 	coinVect.push_back(Coin(coinTexture, getRandomNumber(1205, 1255, 'c'), getRandomNumber(-6300, -6500, 'c'), 60, 60, 10, 0.1));
 	
-	Coin cc(coinTexture, 0, 0, 60, 60, 10, 0.1);
 	//ScoreBoard
 	scoreBoard.setPosition(Vector2f(501.0f,0));
 
+	///////////////////////////////////
 	//Enemies Objects
 	Enemy en1(getRandomImage(), getRandomNumber(705, 805, 'e'), getRandomNumber(-1500, -1700, 'e'), getRandomNumber(3, 8, 's'));
 	Enemy en2(getRandomImage(), getRandomNumber(855, 955, 'e'), getRandomNumber(-1800, -2000, 'e'), getRandomNumber(3, 8, 's'));
 	Enemy en3(getRandomImage(), getRandomNumber(1005, 1055, 'e'), getRandomNumber(-2200, -2400, 'e'), getRandomNumber(3, 8, 's'));
 	Enemy en4(getRandomImage(), getRandomNumber(1105, 1155, 'e'), getRandomNumber(-2500, -2700, 'e'), getRandomNumber(3, 8, 's'));
 	Enemy en5(getRandomImage(), getRandomNumber(1205, 1255, 'e'), getRandomNumber(-2800, -3000, 'e'), getRandomNumber(3, 8, 's'));
-	/*
-	enemVect.push_back(Enemy(getRandomImage(), getRandomNumber(705, 805, 'e'), getRandomNumber(-1500, -1700, 'e'), getRandomNumber(3, 8, 's')));
-	enemVect.push_back(Enemy(getRandomImage(), getRandomNumber(815, 915, 'e'), getRandomNumber(-1800, -2000, 'e'), getRandomNumber(3, 8, 's')));
-	enemVect.push_back(Enemy(getRandomImage(), getRandomNumber(925, 1025, 'e'), getRandomNumber(-2200, -2400, 'e'), getRandomNumber(3, 8, 's')));
-	*/
+
+	///////////////////////////////////
+	//Obstacles
+	
+	Obstacle obs1(obs1Txt, getRandomNumber(705, 805, 'e'), getRandomNumber(-2000, -3000, 'e'), 0.5);
+	Obstacle obs2(obs1Txt, getRandomNumber(1005, 1055, 'e'), getRandomNumber(-4000, -5000, 'e'), 0.5);
+	Obstacle obs3(obs1Txt, getRandomNumber(1105, 1155, 'e'), getRandomNumber(-6000, -7000, 'e'), 0.5);
+	Obstacle obs4(obs1Txt, getRandomNumber(1205, 1255, 'e'), getRandomNumber(-8000, -9000, 'e'), 0.5);
+
 
 
 	RenderWindow window(VideoMode(1920, 1080), "Drift Race", sf::Style::Close | sf::Style::Titlebar);
@@ -378,7 +421,7 @@ int main() {
 			BackgroundY5 += speed;
 		}
 
-
+		////////////////////////////////////
 		// Regeneration of Enemy
 		//cout << en1.getPosY() << endl;
 
@@ -403,12 +446,14 @@ int main() {
 //			score++;
 		}
 
+		/////////////////////////////
 		// Game Level
 		if (score > 25 && score < 150) { maxSpeed = 7; oppMaxSpeed = 7; };
 		if (score > 150 && score < 200) { maxSpeed = 9; oppMaxSpeed = 9; };
 		if (score > 200 && score < 250) { maxSpeed = 11; oppMaxSpeed = 11; };
 
 
+		//////////////////////////////
 		//Check collission of player and enemy
 		if (!collided) {
 			if (getDistance(racer.getPosX(), racer.getPosY(), en1.getPosX(), en1.getPosY()) < 60 ||
@@ -467,7 +512,6 @@ int main() {
 			}
 		}
 
-
 		
 		///////////////////////////////////////////////
 		///////////////////////////////////////////////
@@ -482,7 +526,6 @@ int main() {
 				score += 2;
 			}
 		}
-
 
 
 		
@@ -517,6 +560,17 @@ int main() {
 		en5.drawEnemy(window);
 		//en6.drawEnemy(window);
 
+		//////////////////////////
+		//////////////////////////
+		///Render Obstacles
+		//////////////////////////
+		//////////////////////////
+
+		obs1.drawObs(window);
+		obs2.drawObs(window);
+		obs3.drawObs(window);
+		obs4.drawObs(window);
+
 
 		//Render Coin
 		for (int i = 0; i < coinVect.size(); i++) {
@@ -524,11 +578,13 @@ int main() {
 			window.draw(coinVect[i].sprite);
 			coinVect[i].updateCoin();
 		}
-		
-		cc.update();
-		window.draw(cc.sprite);
 
+
+		//////////////////////////
+		//////////////////////////
 		//Explosion
+		//////////////////////////
+		//////////////////////////
 		if (collided) {
 
 			for (int i = 0; i < explode.size(); i++) {
