@@ -1,8 +1,15 @@
 #pragma once
-#include "Explosion.h"
-class Bullet : public Explosion
+#include <iostream>
+#include <string>
+using namespace std;
+
+#include <SFML/Graphics.hpp>
+using namespace sf;
+
+#include "Animation.h"
+class Bullet : public Animation
 {
-	using Explosion::Explosion;
+	using Animation::Animation;
 
 private:
 	int life = 1;
