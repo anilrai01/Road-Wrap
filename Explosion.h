@@ -7,19 +7,20 @@ using namespace std;
 using namespace sf;
 
 #include<vector>
+#include "Animation.h"
 
-class Explosion
+class Explosion : public Animation
 {
+	using Animation::Animation;
 public:
+	/*
 	float Frame, speed;
 	Sprite sprite;
 	vector <IntRect> frames;
 
-	Explosion() { Frame = 0; speed = 0; };
 	Explosion(Texture &, int, int, int, int, int, float);
+	*/
 
 	bool isEnd();
-
-	void update();
 };
 
