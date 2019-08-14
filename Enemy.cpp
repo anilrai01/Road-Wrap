@@ -9,14 +9,14 @@ Enemy::Enemy(string imgDirectory, int posX, int posY, int speed)
 			throw "Error loading Enemy";
 		}
 	}
-	catch (const char * msg)
+	catch (const char* msg)
 	{
 		cout << msg;
 	}
 
 	enemySpr.setTexture(enemyTxt);
 	enemySpr.setScale(Vector2f(1.3f, 1.5f));
-	
+
 	this->posX = posX;
 	this->posY = posY;
 	this->acc = speed;
@@ -58,11 +58,11 @@ void Enemy::setNewTexture(string imgDir)
 			throw "Error repeating enemy Files";
 		}
 	}
-	catch (const char * msg)
+	catch (const char* msg)
 	{
 		cout << msg;
 	}
-	
+
 	enemySpr.setTexture(enemyTxt);
 	enemySpr.setScale(Vector2f(1.3f, 1.5f));
 }
