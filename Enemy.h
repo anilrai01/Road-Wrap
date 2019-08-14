@@ -19,7 +19,7 @@ public:
 	void setNewTexture(string);
 	void setSpeed(int);
 
-private:
+protected:
 	Texture enemyTxt;
 	Sprite enemySpr;
 	int posX;
