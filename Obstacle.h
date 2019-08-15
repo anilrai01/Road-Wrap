@@ -16,8 +16,10 @@ private:
 
 public:
 	Obstacle() { this->posX = 0; this->posY = 0; this->acc = 0; };
-	Obstacle(Texture imgTexture, int posX, int posY, int speed);
+	Obstacle(Texture& imgTexture, int posX, int posY);
 	void moveObs();
-	void updateObs(float, float);
+	void setPosY(float);
 	void drawObs(RenderWindow &window);
+	float getPosX();
+	float getPosY();
 };
