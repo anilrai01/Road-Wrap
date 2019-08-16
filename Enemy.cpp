@@ -15,11 +15,12 @@ Enemy::Enemy(string imgDirectory, int posX, int posY, int speed)
 	}
 
 	enemySpr.setTexture(enemyTxt);
-	enemySpr.setScale(Vector2f(1.3f, 1.5f));
+	//enemySpr.setRotation(180);
+	enemySpr.setScale(Vector2f(0.8f, 0.8f));
 
 	this->posX = posX;
 	this->posY = posY;
-	this->acc = speed;
+	this->acc = 2;
 }
 
 void Enemy::drawEnemy(RenderWindow& window)
@@ -64,7 +65,8 @@ void Enemy::setNewTexture(string imgDir)
 	}
 
 	enemySpr.setTexture(enemyTxt);
-	enemySpr.setScale(Vector2f(1.3f, 1.5f));
+	//enemySpr.setRotation(180);
+	//enemySpr.setScale(Vector2f(0.6f, 0.6f));
 }
 
 void Enemy::setSpeed(int speed)
