@@ -14,7 +14,7 @@ Player::Player(string imgDirectory, float posX, float posY)
 	}
 
 	playerSprite.setTexture(playerTexture);
-	playerSprite.setScale(Vector2f(0.6f, 0.6f));
+	playerSprite.setScale(Vector2f(0.7f, 0.7f));
 	//playerSprite.setRotation(45);
 
 	this->posX = posX;
@@ -40,12 +40,12 @@ void Player::movePlayer(char direction)
 		}
 	}
 	if (direction == 'l') {
-		if (playerSprite.getPosition().x >= 705 + acc) {
+		if (playerSprite.getPosition().x >= 600 + acc) {
 			posX -= acc;
 		}
 	}
 	if (direction == 'r') {
-		if (playerSprite.getPosition().x < 1280 - acc) {
+		if (playerSprite.getPosition().x < 1260 - acc) {
 			posX += acc;
 		}
 	}
