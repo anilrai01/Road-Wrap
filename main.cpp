@@ -47,6 +47,9 @@ void setCoinNewPosition(Coin& , int );
 // DISTANCE BETWEEN COIN AND PLAYER
 float getCPdistance(Coin& , Player& );
 
+//Distance between obstacle and player
+int getOPDistance(Obstacle&, Player&);
+
 int main() {
 	//In Game variables for game loop
 	string lineFile;
@@ -63,6 +66,8 @@ int main() {
 	float borderRight = 0;
 	float borderLeft = 705.0f;
 	float score = 0;
+	Clock clock;
+	float beginTime = clock.getElapsedTime().asSeconds();
 	
 	//Enemy max lim
 	int oppMaxSpeed = 5;
@@ -85,9 +90,9 @@ int main() {
 	vector<Obstacle> obsVect;
 
 	///////Sound Buffer
-	SoundBuffer fireBuffer, coinPick;
+	SoundBuffer fireBuffer, coinPick, carBuffer;
 	//Sound 
-	Sound fireSound, coinSound;
+	Sound fireSound, coinSound, carSound;
 	/// Testing Sound
 	if (!fireBuffer.loadFromFile("sounds/bulletShot.wav")) {
 		cout << "Error Loading Sound" << endl;
@@ -95,9 +100,24 @@ int main() {
 	if (!coinPick.loadFromFile("sounds/Pickup_Coin.wav")) {
 		cout << "Error Loading Sound" << endl;
 	}
+	if (!carBuffer.loadFromFile("sounds/car3.wav")) {
+		cout << "Error loading Car Sound";
+	}
+	else {
+		cout << "Car sound loaded successfully";
+	}
 	//Setting Sounds
 	fireSound.setBuffer(fireBuffer);
 	coinSound.setBuffer(coinPick);
+	carSound.setBuffer(carBuffer);
+
+	
+	/// Play main Sound
+	carSound.play();
+	carSound.setVolume(0);
+	carSound.setLoop(true);
+	//carSound.pause();
+	
 
 	/////////Fonts
 	Font scoreFont, highScoreFont;
@@ -245,7 +265,7 @@ int main() {
 
 	///////////////////////////////////
 	//Player Object
-	Player racer("images/Car.png", 985.0f, 900.0f);
+	Player racer("images/audi.png", 925.0f, 900.0f);
 
 	///////////////////////////////////
 	//Coin Objects
@@ -262,22 +282,20 @@ int main() {
 	//Enemies Objects
 	Enemy en1(getRandomImage(), getRandomNumber(705, 805, 'e'), getRandomNumber(-1000, -1500, 'e'), getRandomNumber(3, 8, 's'));
 	Enemy en2(getRandomImage(), getRandomNumber(855, 955, 'e'), getRandomNumber(-2000, -2500, 'e'), getRandomNumber(3, 8, 's'));
-	Enemy en3(getRandomImage(), getRandomNumber(1005, 1055, 'e'), getRandomNumber(-2200, -2400, 'e'), getRandomNumber(3, 8, 's'));
-	Enemy en4(getRandomImage(), getRandomNumber(1105, 1155, 'e'), getRandomNumber(-2500, -2700, 'e'), getRandomNumber(3, 8, 's'));
-	Enemy en5(getRandomImage(), getRandomNumber(1205, 1255, 'e'), getRandomNumber(-2800, -3000, 'e'), getRandomNumber(3, 8, 's'));
+	Enemy en3(getRandomImage(), getRandomNumber(1005, 1105, 'e'), getRandomNumber(-2200, -2400, 'e'), getRandomNumber(3, 8, 's'));
+	Enemy en4(getRandomImage(), getRandomNumber(1155, 1255, 'e'), getRandomNumber(-2500, -2700, 'e'), getRandomNumber(3, 8, 's'));
 
 	///////////////////////////////////
 	//Obstacles
-	
-	Obstacle obs1(obs1Txt, getRandomNumber(705, 805, 'e'), getRandomNumber(705, 805, 'e'));
-	Obstacle obs2(obs2Txt, getRandomNumber(1005, 1055, 'e'), getRandomNumber(805, 905, 'e'));
 
-	obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(705, 805, 'e'), getRandomNumber(-1500, -2000, 'e')));
-	obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(1000, 1100, 'e'), getRandomNumber(-00, -2000, 'e')));
-	obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(705, 805, 'e'), getRandomNumber(-2000, -2200, 'e')));
-	obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(1000, 1100, 'e'), getRandomNumber(-2300, -2400, 'e')));
-	obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(705, 805, 'e'), getRandomNumber(-2600, -2700, 'e')));
-	obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(1000, 1100, 'e'), getRandomNumber(-2900, -3100, 'e')));
+	obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(600, 800, 'e'), getRandomNumber(-1000, -2000, 'e')));
+	obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(900, 1100, 'e'), getRandomNumber(-2500, -3500, 'e')));
+	obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(600, 800, 'e'), getRandomNumber(-4000, -5000, 'e')));
+	obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(900, 1100, 'e'), getRandomNumber(-5500, -6500, 'e')));
+	obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(700, 1200, 'e'), getRandomNumber(-7000, -8000, 'e')));
+	obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(700, 1200, 'e'), getRandomNumber(-8500, -9500, 'e')));
+	obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(600, 800, 'e'), getRandomNumber(-10000, - 11000, 'e')));
+	obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(900, 1100, 'e'), getRandomNumber(-15000, -1600, 'e')));
 
 	//Obstacle obs3(obs1Txt, getRandomNumber(1105, 1155, 'e'), getRandomNumber(-6000, -7000, 'e'), 0.5);
 	//Obstacle obs4(obs2Txt, getRandomNumber(1205, 1255, 'e'), getRandomNumber(-8000, -9000, 'e'), 0.5);
@@ -290,6 +308,13 @@ int main() {
 	//Loading Window  main Game LOOP
 	while (window.isOpen()) {
 		Event evnt;
+		//Delay Game Sound
+		float currentTime = clock.getElapsedTime().asSeconds();
+		if (currentTime - beginTime >= 3)
+		{
+				carSound.setVolume(20);
+			
+		}
 
 		while (window.pollEvent(evnt)) {
 
@@ -416,26 +441,23 @@ int main() {
 		// Regeneration of Enemy
 		//cout << en1.getPosY() << endl;
 
-		if (en1.getPosY() > 1080) {
+		if (en1.getPosY() > 1200) {
 			setEnemNewPosition(en1, 1, oppMaxSpeed);
 //			score++;
 		}
-		if (en2.getPosY() > 1080) {
+		if (en2.getPosY() > 1200) {
 			setEnemNewPosition(en2, 2, oppMaxSpeed);
 //			score++;
 		}
-		if (en3.getPosY() > 1080) {
+		if (en3.getPosY() > 1200) {
 			setEnemNewPosition(en3, 3, oppMaxSpeed);
 //			score++;
 		}
-		if (en4.getPosY() > 1080) {
+		if (en4.getPosY() > 1200) {
 			setEnemNewPosition(en4, 4, oppMaxSpeed);
 //			score++;
 		}
-		if (en5.getPosY() > 1080) {
-			setEnemNewPosition(en5, 5, oppMaxSpeed);
-//			score++;
-		}
+
 
 		/////////////////////////////
 		// Game Level
@@ -450,8 +472,8 @@ int main() {
 			if (getDistance(racer.getPosX(), racer.getPosY(), en1.getPosX(), en1.getPosY()) < 60 ||
 				getDistance(racer.getPosX(), racer.getPosY(), en2.getPosX(), en2.getPosY()) < 60 ||
 				getDistance(racer.getPosX(), racer.getPosY(), en3.getPosX(), en3.getPosY()) < 60 ||
-				getDistance(racer.getPosX(), racer.getPosY(), en4.getPosX(), en4.getPosY()) < 60 ||
-				getDistance(racer.getPosX(), racer.getPosY(), en5.getPosX(), en5.getPosY()) < 60)
+				getDistance(racer.getPosX(), racer.getPosY(), en4.getPosX(), en4.getPosY()) < 60)
+			//	getDistance(racer.getPosX(), racer.getPosY(), en5.getPosX(), en5.getPosY()) < 60)
 			{
 				collided = true;
 				//cout << "Collided";
@@ -492,14 +514,14 @@ int main() {
 					
 					setEnemNewPosition(en4, 4, oppMaxSpeed);
 					score += 1;
-				}
+				}/*
 				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en5.getPosX(), en5.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en5.getPosX() - 170, (int)en5.getPosY() - 150, 256, 256, 48, 0.25));
 					
 					setEnemNewPosition(en5, 5, oppMaxSpeed);
 					score += 1;
-				}
+				}*/
 			}
 		}
 
@@ -518,31 +540,51 @@ int main() {
 			}
 		}
 
+
+		///////////////////////////////////////////////
+		///////////////////////////////////////////////
+		/////////////// Obstacle COLLISION ///////////////
+		///////////////////////////////////////////////
+		///////////////////////////////////////////////
+		for (int i = 0; i < obsVect.size(); i++) {
+			if (getOPDistance(obsVect[i], racer) < 80) {
+				//cout << "Collided";
+				//
+				collided = true;
+				explode.push_back(Explosion(bombTxt, (int)racer.getPosX() - 170, (int)racer.getPosY() - 150, 256, 256, 48, 0.25));
+				//
+				obsVect[i].setPosY(getRandomNumber(-1000, -5500, 'e'));
+				racer.setLife(racer.getLife() - 1);
+			}
+		}
+
+
 		//////////////////////////////////////////////
 		///////////// RESPAWN OBSTACLES /////////////
 		/////////////////////////////////////////////
-		cout << obsVect[0].getPosY() << endl;
+		//cout << obsVect[0].getPosY() << endl;
 		for (int i = 0; i < obsVect.size(); i++) {
 
 			if (obsVect[i].getPosY() > 1080) {
 				if (i == 0) {
-					obsVect[i].setPosY((float)getRandomNumber(-1000, -1500, 'e'));
+					obsVect[i].setPosY((float)getRandomNumber(-1000, -2000, 'e'));
 				}
 				else if (i == 1) {
-					obsVect[i].setPosY((float)getRandomNumber(-2000, -2500, 'e'));
+					obsVect[i].setPosY((float)getRandomNumber(-2500, -3500, 'e'));
 				}
 				else if (i == 2) {
-					obsVect[i].setPosY((float)getRandomNumber(-3000, -3500, 'e'));
+					obsVect[i].setPosY((float)getRandomNumber(-4000, -5000, 'e'));
 				}
 				else if (i == 3) {
-					obsVect[i].setPosY((float)getRandomNumber(-4000, -4500, 'e'));
+					obsVect[i].setPosY((float)getRandomNumber(-5500, -6500, 'e'));
 				}
 				else if (i == 4) {
-					obsVect[i].setPosY((float)getRandomNumber(-5000, -5500, 'e'));
+					obsVect[i].setPosY((float)getRandomNumber(-7000, -8000, 'e'));
 				}
 				else if (i == 5) {
-					obsVect[i].setPosY((float)getRandomNumber(-6000, -6500, 'e'));
+					obsVect[i].setPosY((float)getRandomNumber(-8500, -9500, 'e'));
 				}
+
 			}
 		}
 
@@ -576,7 +618,7 @@ int main() {
 		en2.drawEnemy(window);
 		en3.drawEnemy(window);
 		en4.drawEnemy(window);
-		en5.drawEnemy(window);
+		//en5.drawEnemy(window);
 		//en6.drawEnemy(window);
 
 		//////////////////////////
@@ -613,6 +655,9 @@ int main() {
 					}*/
 					explode.pop_back(); collided = false;
 				};
+			}
+			if (explode.empty()) {
+				fire = false;
 			}
 		}
 
@@ -698,7 +743,7 @@ int getRandomNumber(int a, int b, char ch)
 
 string getRandomImage() {
 	stringstream ss;
-	ss << getRandomNumber(1, 4, 'i');
+	ss << getRandomNumber(1, 8, 'i');
 	string imgTag = ss.str();
 
 	string imgDir = "images/obs" + imgTag + ".png";
@@ -713,27 +758,27 @@ float getDistance(float x1, float y1, int x2, int y2) {
 
 void setEnemNewPosition(Enemy &enem, int num, int speed) {
 	if (num == 1) {
-		enem.setPosY(getRandomNumber(-1500, -1700, 'e'));
+		enem.setPosY(getRandomNumber(-1000, -2000, 'e'));
 		enem.setNewTexture(getRandomImage());
 		enem.setSpeed(getRandomNumber(3, speed, 's'));
 	}
 	else if (num == 2) {
-		enem.setPosY(getRandomNumber(-1800, -2000, 'e'));
+		enem.setPosY(getRandomNumber(-1500, -2500, 'e'));
 		enem.setNewTexture(getRandomImage());
 		enem.setSpeed(getRandomNumber(3, speed, 's'));
 	}
 	else if (num == 3) {
-		enem.setPosY(getRandomNumber(-2100, -2300, 'e'));
+		enem.setPosY(getRandomNumber(-2000, -3000, 'e'));
 		enem.setNewTexture(getRandomImage());
 		enem.setSpeed(getRandomNumber(3, speed, 's'));
 	}
 	else if (num == 4) {
-		enem.setPosY(getRandomNumber(-2400, -2600, 'e'));
+		enem.setPosY(getRandomNumber(-2500, -3500, 'e'));
 		enem.setNewTexture(getRandomImage());
 		enem.setSpeed(getRandomNumber(3, speed, 's'));
 	}
 	else if (num == 5) {
-		enem.setPosY(getRandomNumber(-2700, -2900, 'e'));
+		enem.setPosY(getRandomNumber(-3000, -4000, 'e'));
 		enem.setNewTexture(getRandomImage());
 		enem.setSpeed(getRandomNumber(3, speed, 's'));
 	}
@@ -761,3 +806,9 @@ void setCoinNewPosition(Coin& coin, int num) {
 		coin.setNewPos(getRandomNumber(1205, 1255, 'c'), getRandomNumber(-6300, -6500, 'c'));
 	}
 }
+
+int getOPDistance(Obstacle& obj1, Player& obj2)
+{
+	return sqrt(pow((obj2.getPosX() - obj1.getPosX()), 2) + pow((obj2.getPosY() - obj1.getPosY()), 2));;
+}
+
