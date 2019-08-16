@@ -17,7 +17,7 @@ void Obstacle::moveObs()
 
 void Obstacle::setPosY(float y)
 {
-	this->posY = y;
+	this->posY = y;	
 }
 
 void Obstacle::drawObs(RenderWindow& window)
