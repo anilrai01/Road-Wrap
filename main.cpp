@@ -16,6 +16,8 @@ using namespace std;
 
 #include <vector>
 
+#include <algorithm>
+
 #include "Animation.h"
 
 #include "Player.h"
@@ -66,6 +68,8 @@ int main() {
 	float borderRight = 0;
 	float borderLeft = 705.0f;
 	float score = 0;
+	int bulletCount = 30;
+
 	Clock clock;
 	float beginTime = clock.getElapsedTime().asSeconds();
 	
@@ -90,54 +94,66 @@ int main() {
 	vector<Obstacle> obsVect;
 
 	///////Sound Buffer
-	SoundBuffer fireBuffer, coinPick, carBuffer;
+	SoundBuffer fireBuffer, coinPick, carBuffer, carCrashBuffer, powerDown, powerUP;
 	//Sound 
-	Sound fireSound, coinSound, carSound;
+	Sound fireSound, coinSound, carSound, carCrash, powerDownSound;
 	/// Testing Sound
-	if (!fireBuffer.loadFromFile("sounds/bulletShot.wav")) {
+	if (!fireBuffer.loadFromFile("sounds/NFF-laser.wav")) {
 		cout << "Error Loading Sound" << endl;
 	}
 	if (!coinPick.loadFromFile("sounds/Pickup_Coin.wav")) {
 		cout << "Error Loading Sound" << endl;
 	}
-	if (!carBuffer.loadFromFile("sounds/car3.wav")) {
+	if (!carBuffer.loadFromFile("sounds/Car-Theft-101.wav")) {
 		cout << "Error loading Car Sound";
 	}
 	else {
 		cout << "Car sound loaded successfully";
 	}
+	if (!carCrashBuffer.loadFromFile("sounds/EXPLOSION Bang 04.wav")) {
+		cout << "Error loading Car start Sound";
+	}
+	if (!powerDown.loadFromFile("sounds/NEGATIVE Failure Descending Chime 05.wav")) {
+		cout << "Error loading Car start Sound";
+	}
 	//Setting Sounds
 	fireSound.setBuffer(fireBuffer);
 	coinSound.setBuffer(coinPick);
 	carSound.setBuffer(carBuffer);
-
+	carCrash.setBuffer(carCrashBuffer);
+	powerDownSound.setBuffer(powerDown);
 	
 	/// Play main Sound
 	carSound.play();
 	carSound.setVolume(0);
 	carSound.setLoop(true);
-	//carSound.pause();
-	
+	/*
+	carStart.play();
+	carStart.setVolume(0);
+	carStart.setLoop(true);
+	*/
 
 	/////////Fonts
-	Font scoreFont, highScoreFont;
-	if (!scoreFont.loadFromFile("fonts/PaladinsCondensed-rB77.otf")) {
+	Font normalFont;
+	if (!normalFont.loadFromFile("fonts/PaladinsCondensed-rB77.otf")) {
 		cout << "Error loading Score Font";
 	}
-	if (!highScoreFont.loadFromFile("fonts/PaladinsCondensed-rB77.otf")) {
-		cout << "Error Loading High Score font";
-	}
-
 
 	//Text
-	Text scoreText, scoreTitleText, highScoreText, highScoreTitleText, titleText;
-	scoreText.setFont(scoreFont);
-	highScoreText.setFont(highScoreFont);
+	Text scoreText, highScoreText, lifeText, bulletText;
+	scoreText.setFont(normalFont);
+	highScoreText.setFont(normalFont);
+	lifeText.setFont(normalFont);
+	bulletText.setFont(normalFont);
 
 	scoreText.setPosition(Vector2f(1250.0f, 100.0f));
 	scoreText.setFillColor(Color::Black);
 	highScoreText.setPosition(Vector2f(640.0f, 100.0f));
 	highScoreText.setFillColor(Color::Black);
+	lifeText.setPosition(Vector2f(880.0f, 100.0f));
+	lifeText.setFillColor(Color::Black);
+	bulletText.setPosition(Vector2f(960.0f, 100.0f));
+	bulletText.setFillColor(Color::Black);
 
 	//stringstream scores;
 	ifstream file;
@@ -145,6 +161,7 @@ int main() {
 	if (!file) {
 		cout << "Error loading Record";
 	}
+	//Set life String
 
 	///////////Texture
 	Texture bg1, bg2, bg3, bg4, bg5, bgCover, bombTxt, bulletTxt, scoreBoardTxt, coinTexture, obs1Txt, obs2Txt;
@@ -193,7 +210,7 @@ int main() {
 
 	if (bgCover.loadFromFile("images/backupBG.png"))
 	{
-		cout << "Files Cover loaded Successfully" << endl;
+		cout << "BackgroundCover loaded Successfully" << endl;
 		bgCover.setSmooth(true);
 	}
 	else {
@@ -207,7 +224,7 @@ int main() {
 	else {
 		cout << "Error loading Cover";
 	}
-	if (bulletTxt.loadFromFile("images/fire_red.png"))
+	if (bulletTxt.loadFromFile("images/fire_blue.png"))
 	{
 		cout << "Gun Fire loaded Successfully" <<endl;
 		bulletTxt.setSmooth(true);
@@ -283,19 +300,18 @@ int main() {
 	Enemy en1(getRandomImage(), getRandomNumber(705, 805, 'e'), getRandomNumber(-1000, -1500, 'e'), getRandomNumber(3, 8, 's'));
 	Enemy en2(getRandomImage(), getRandomNumber(855, 955, 'e'), getRandomNumber(-2000, -2500, 'e'), getRandomNumber(3, 8, 's'));
 	Enemy en3(getRandomImage(), getRandomNumber(1005, 1105, 'e'), getRandomNumber(-2200, -2400, 'e'), getRandomNumber(3, 8, 's'));
-	Enemy en4(getRandomImage(), getRandomNumber(1155, 1255, 'e'), getRandomNumber(-2500, -2700, 'e'), getRandomNumber(3, 8, 's'));
+	Enemy en4(getRandomImage(), getRandomNumber(1155, 1200, 'e'), getRandomNumber(-2500, -2700, 'e'), getRandomNumber(3, 8, 's'));
 
 	///////////////////////////////////
 	//Obstacles
 
-	obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(600, 800, 'e'), getRandomNumber(-1000, -2000, 'e')));
-	obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(900, 1100, 'e'), getRandomNumber(-2500, -3500, 'e')));
-	obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(600, 800, 'e'), getRandomNumber(-4000, -5000, 'e')));
-	obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(900, 1100, 'e'), getRandomNumber(-5500, -6500, 'e')));
-	obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(700, 1200, 'e'), getRandomNumber(-7000, -8000, 'e')));
-	obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(700, 1200, 'e'), getRandomNumber(-8500, -9500, 'e')));
-	obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(600, 800, 'e'), getRandomNumber(-10000, - 11000, 'e')));
-	obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(900, 1100, 'e'), getRandomNumber(-15000, -1600, 'e')));
+	obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(650, 750, 'e'), getRandomNumber(-1000, -2000, 'e')));
+	obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(950, 1050, 'e'), getRandomNumber(-2500, -3500, 'e')));
+	obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(850, 950, 'e'), getRandomNumber(-4000, -5000, 'e')));
+	obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(1100, 1150, 'e'), getRandomNumber(-5500, -6500, 'e')));
+	
+	//obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(600, 800, 'e'), getRandomNumber(-10000, - 11000, 'e')));
+	//obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(1000, 1100, 'e'), getRandomNumber(-15000, -1600, 'e')));
 
 	//Obstacle obs3(obs1Txt, getRandomNumber(1105, 1155, 'e'), getRandomNumber(-6000, -7000, 'e'), 0.5);
 	//Obstacle obs4(obs2Txt, getRandomNumber(1205, 1255, 'e'), getRandomNumber(-8000, -9000, 'e'), 0.5);
@@ -308,12 +324,12 @@ int main() {
 	//Loading Window  main Game LOOP
 	while (window.isOpen()) {
 		Event evnt;
+
 		//Delay Game Sound
 		float currentTime = clock.getElapsedTime().asSeconds();
 		if (currentTime - beginTime >= 3)
 		{
 				carSound.setVolume(20);
-			
 		}
 
 		while (window.pollEvent(evnt)) {
@@ -326,9 +342,15 @@ int main() {
 				if (evnt.key.code == Keyboard::Space) 
 				{
 					//cout << "Fired";
-					fire = true;
-					bullet.push_back(Bullet(bulletTxt, (int)racer.getPosX(), (int)racer.getPosY(), 32, 64, 16, 0.25));
-					fireSound.play();
+					if (bulletCount > 0) {
+						fire = true;
+						bullet.push_back(Bullet(bulletTxt, (int)racer.getPosX(), (int)racer.getPosY(), 32, 64, 16, 0.25));
+						fireSound.play();
+						bulletCount--;
+					}
+					else {
+
+					}
 				}
 				break;
 			}
@@ -344,19 +366,24 @@ int main() {
 			//cout << lineFile << endl;
 		}
 //		file.close();
-
+		//Showing life
 		scoreText.setString(to_string((int)score));
+		lifeText.setString(to_string(racer.getLife()));
+		bulletText.setString(to_string(bulletCount));
 
 		if (!collided) {
 			//player movement
+			/*
 			if (Keyboard::isKeyPressed(Keyboard::Up)) {
 				racer.movePlayer('u');
 			}
-			if (Keyboard::isKeyPressed(Keyboard::Right)) {
-				racer.movePlayer('r');
-			}
+
 			if (Keyboard::isKeyPressed(Keyboard::Down)) {
 				racer.movePlayer('d');
+			}
+			*/
+			if (Keyboard::isKeyPressed(Keyboard::Right)) {
+				racer.movePlayer('r');
 			}
 			if (Keyboard::isKeyPressed(Keyboard::Left)) {
 				racer.movePlayer('l');
@@ -374,19 +401,19 @@ int main() {
 
 		if (mainBG.getPosition().y >= 1080)
 		{
-			BackgroundY1 = -4320.0f;
+			BackgroundY1 = -4315.0f;
 		}
 		if (mainBG2.getPosition().y >= 1080) {
-			BackgroundY2 = -4320.0f;
+			BackgroundY2 = -4315.0f;
 		}
 		if (mainBG3.getPosition().y >= 1080) {
-			BackgroundY3 = -4320.0f;
+			BackgroundY3 = -4315.0f;
 		}
 		if (mainBG4.getPosition().y >= 1080) {
-			BackgroundY4 = -4320.0f;
+			BackgroundY4 = -4315.0f;
 		}
 		if (mainBG5.getPosition().y >= 1080) {
-			BackgroundY5 = -4320.0f;
+			BackgroundY5 = -4315.0f;
 		}
 		/////////////////////////////////////////////////
 		///////////////// PLAYER COLLISION /////////////
@@ -469,16 +496,18 @@ int main() {
 		//////////////////////////////
 		//Check collission of player and enemy
 		if (!collided) {
-			if (getDistance(racer.getPosX(), racer.getPosY(), en1.getPosX(), en1.getPosY()) < 60 ||
-				getDistance(racer.getPosX(), racer.getPosY(), en2.getPosX(), en2.getPosY()) < 60 ||
-				getDistance(racer.getPosX(), racer.getPosY(), en3.getPosX(), en3.getPosY()) < 60 ||
-				getDistance(racer.getPosX(), racer.getPosY(), en4.getPosX(), en4.getPosY()) < 60)
+			if (getDistance(racer.getPosX(), racer.getPosY(), en1.getPosX(), en1.getPosY()) < 50 ||
+				getDistance(racer.getPosX(), racer.getPosY(), en2.getPosX(), en2.getPosY()) < 50 ||
+				getDistance(racer.getPosX(), racer.getPosY(), en3.getPosX(), en3.getPosY()) < 50 ||
+				getDistance(racer.getPosX(), racer.getPosY(), en4.getPosX(), en4.getPosY()) < 50)
 			//	getDistance(racer.getPosX(), racer.getPosY(), en5.getPosX(), en5.getPosY()) < 60)
 			{
 				collided = true;
 				//cout << "Collided";
 				explode.push_back(Explosion(bombTxt, (int)racer.getPosX() - 170, (int)racer.getPosY() - 150, 256, 256, 48, 0.25));
 				racer.setLife(racer.getLife() - 1);
+				//carCrash.play();
+				powerDownSound.play();
 			}
 		}
 
@@ -490,9 +519,15 @@ int main() {
 				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en1.getPosX(), en1.getPosY()) < 60) {
 					bulletCollide = true;
 					enemyExplode.push_back(Explosion(bombTxt, (int)en1.getPosX() - 170, (int)en1.getPosY() - 150, 256, 256, 48, 0.25));
-					
+//					bullet.erase(find(bullet.begin(), bullet.end(), bullet[i]));
+
+					/// Checking bullet collision an popping it out
+					//bullet.erase(remove(bullet.begin(), bullet.end(), bullet[i]), bullet.end());
+
 					setEnemNewPosition(en1, 1, oppMaxSpeed);
 					score += 1;
+
+					carCrash.play();
 				}
 				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en2.getPosX(), en2.getPosY()) < 60) {
 					bulletCollide = true;
@@ -500,6 +535,8 @@ int main() {
 					
 					setEnemNewPosition(en2, 2, oppMaxSpeed);
 					score += 1;
+
+					carCrash.play();
 				}
 				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en3.getPosX(), en3.getPosY()) < 60) {
 					bulletCollide = true;
@@ -507,6 +544,8 @@ int main() {
 					
 					setEnemNewPosition(en3, 3, oppMaxSpeed);
 					score += 1;
+
+					carCrash.play();
 				}
 				if(getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en4.getPosX(), en4.getPosY()) < 60) {
 					bulletCollide = true;
@@ -514,6 +553,8 @@ int main() {
 					
 					setEnemNewPosition(en4, 4, oppMaxSpeed);
 					score += 1;
+
+					carCrash.play();
 				}/*
 				if (getDistance((float)bullet[i].getPosX(), (float)bullet[i].getPosY(), en5.getPosX(), en5.getPosY()) < 60) {
 					bulletCollide = true;
@@ -555,6 +596,8 @@ int main() {
 				//
 				obsVect[i].setPosY(getRandomNumber(-1000, -5500, 'e'));
 				racer.setLife(racer.getLife() - 1);
+				//carCrash.play();
+				powerDownSound.play();
 			}
 		}
 
@@ -565,7 +608,7 @@ int main() {
 		//cout << obsVect[0].getPosY() << endl;
 		for (int i = 0; i < obsVect.size(); i++) {
 
-			if (obsVect[i].getPosY() > 1080) {
+			if (obsVect[i].getPosY() > 1200) {
 				if (i == 0) {
 					obsVect[i].setPosY((float)getRandomNumber(-1000, -2000, 'e'));
 				}
@@ -587,6 +630,8 @@ int main() {
 
 			}
 		}
+
+
 
 
 		
@@ -656,6 +701,7 @@ int main() {
 					explode.pop_back(); collided = false;
 				};
 			}
+
 			if (explode.empty()) {
 				fire = false;
 			}
@@ -668,7 +714,7 @@ int main() {
 				bullet[i].updateBullet();
 
 				if (bullet[i].getPosY() < 0) {
-					bullet.erase(bullet.begin() + 0);
+					bullet.erase(bullet.begin());
 				}
 			}
 
@@ -699,6 +745,8 @@ int main() {
 		//Render Score
 		window.draw(highScoreText);
 		window.draw(scoreText);
+		window.draw(lifeText);
+		window.draw(bulletText);
 
 		//////////////////////////
 
@@ -743,7 +791,7 @@ int getRandomNumber(int a, int b, char ch)
 
 string getRandomImage() {
 	stringstream ss;
-	ss << getRandomNumber(1, 8, 'i');
+	ss << getRandomNumber(1, 7, 'i');
 	string imgTag = ss.str();
 
 	string imgDir = "images/obs" + imgTag + ".png";
