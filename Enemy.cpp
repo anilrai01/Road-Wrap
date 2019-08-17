@@ -16,7 +16,7 @@ Enemy::Enemy(string imgDirectory, int posX, int posY, int speed)
 
 	enemySpr.setTexture(enemyTxt);
 	//enemySpr.setRotation(180);
-	enemySpr.setScale(Vector2f(0.8f, 0.8f));
+	enemySpr.setScale(Vector2f(0.9f, 0.9f));
 
 	this->posX = posX;
 	this->posY = posY;
