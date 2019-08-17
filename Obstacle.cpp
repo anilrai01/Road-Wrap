@@ -1,10 +1,11 @@
+
 #include "Obstacle.h"
 
 Obstacle::Obstacle(Texture& imgTexture, int posX, int posY)
 {
 	obsSpr.setTexture(imgTexture);
-	//obsSpr.setScale(Vector2f(0.3f, 0.5f));
-
+	obsSpr.setScale(Vector2f(1.3f, 1.3f));
+	obsSpr.setOrigin(Vector2f(this->obsSpr.getGlobalBounds().width / 2.0f, this->obsSpr.getGlobalBounds().height / 2.0f));
 	this->posX = posX;
 	this->posY = posY;
 }
