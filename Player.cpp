@@ -14,7 +14,8 @@ Player::Player(string imgDirectory, float posX, float posY)
 	}
 
 	playerSprite.setTexture(playerTexture);
-	playerSprite.setScale(Vector2f(0.7f, 0.7f));
+	playerSprite.setScale(Vector2f(0.8f, 0.8f));
+	//playerSprite.setOrigin(Vector2f(playerSprite.getGlobalBounds().width / 2, playerSprite.getGlobalBounds().height / 2));
 	//playerSprite.setRotation(45);
 
 	this->posX = posX;
