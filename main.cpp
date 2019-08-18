@@ -32,6 +32,8 @@ using namespace std;
 
 #include "Obstacle.h"
 
+#include "PowerUP.h"
+
 //Creat random Number for game loop
 int getRandomNumber(int a, int b, char ch);
 
@@ -52,6 +54,9 @@ float getCPdistance(Coin& , Player& );
 //Distance between obstacle and player
 int getOPDistance(Obstacle&, Player&);
 
+//Distance between powerup and player
+float getPPdistance(PowerUP& pp, Player& p);
+
 int main() {
 	//In Game variables for game loop
 	string lineFile;
@@ -68,7 +73,7 @@ int main() {
 	float borderRight = 0;
 	float borderLeft = 705.0f;
 	float score = 0;
-	int bulletCount = 30;
+	int bulletCount = 10;
 
 	Clock clock;
 	float beginTime = clock.getElapsedTime().asSeconds();
@@ -94,9 +99,9 @@ int main() {
 	vector<Obstacle> obsVect;
 
 	///////Sound Buffer
-	SoundBuffer fireBuffer, coinPick, carBuffer, carCrashBuffer, powerDown, powerUP;
+	SoundBuffer fireBuffer, coinPick, carBuffer, carCrashBuffer, powerDown, powerUPSoundBuffer;
 	//Sound 
-	Sound fireSound, coinSound, carSound, carCrash, powerDownSound;
+	Sound fireSound, coinSound, carSound, carCrash, powerDownSound, powerUPSound;
 	/// Testing Sound
 	if (!fireBuffer.loadFromFile("sounds/NFF-laser.wav")) {
 		cout << "Error Loading Sound" << endl;
@@ -108,7 +113,7 @@ int main() {
 		cout << "Error loading Car Sound";
 	}
 	else {
-		cout << "Car sound loaded successfully";
+		cout << "Car sound loaded successfully" << endl;
 	}
 	if (!carCrashBuffer.loadFromFile("sounds/EXPLOSION Bang 04.wav")) {
 		cout << "Error loading Car start Sound";
@@ -116,13 +121,17 @@ int main() {
 	if (!powerDown.loadFromFile("sounds/NEGATIVE Failure Descending Chime 05.wav")) {
 		cout << "Error loading Car start Sound";
 	}
+	if (!powerUPSoundBuffer.loadFromFile("sounds/SUCCESS PICKUP Collect Chime 01.wav")) {
+		cout << "Error loading powerup sound";
+	}
 	//Setting Sounds
 	fireSound.setBuffer(fireBuffer);
 	coinSound.setBuffer(coinPick);
 	carSound.setBuffer(carBuffer);
 	carCrash.setBuffer(carCrashBuffer);
 	powerDownSound.setBuffer(powerDown);
-	
+	powerUPSound.setBuffer(powerUPSoundBuffer);
+
 	/// Play main Sound
 	carSound.play();
 	carSound.setVolume(0);
@@ -152,7 +161,7 @@ int main() {
 	highScoreText.setFillColor(Color::Black);
 	lifeText.setPosition(Vector2f(880.0f, 100.0f));
 	lifeText.setFillColor(Color::Black);
-	bulletText.setPosition(Vector2f(960.0f, 100.0f));
+	bulletText.setPosition(Vector2f(980.0f, 100.0f));
 	bulletText.setFillColor(Color::Black);
 
 	//stringstream scores;
@@ -164,7 +173,7 @@ int main() {
 	//Set life String
 
 	///////////Texture
-	Texture bg1, bg2, bg3, bg4, bg5, bgCover, bombTxt, bulletTxt, scoreBoardTxt, coinTexture, obs1Txt, obs2Txt;
+	Texture bg1, bg2, bg3, bg4, bg5, bgCover, bombTxt, bulletTxt, scoreBoardTxt, coinTexture, obs1Txt, obs2Txt, powerUP;
 
 	if (bg1.loadFromFile("images/new1.png"))
 	{
@@ -224,7 +233,7 @@ int main() {
 	else {
 		cout << "Error loading Cover";
 	}
-	if (bulletTxt.loadFromFile("images/fire_blue.png"))
+	if (bulletTxt.loadFromFile("images/fire_red.png"))
 	{
 		cout << "Gun Fire loaded Successfully" <<endl;
 		bulletTxt.setSmooth(true);
@@ -265,6 +274,14 @@ int main() {
 	}
 	else {
 		cout << "Error loading Block";
+	}
+	if (powerUP.loadFromFile("images/HP_Bonus.png"))
+	{
+		cout << "Bonus Loaded Successfully" << endl;
+		coinTexture.setSmooth(true);
+	}
+	else {
+		cout << "Error loading Bonus";
 	}
 	
 
@@ -310,13 +327,10 @@ int main() {
 	obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(850, 950, 'e'), getRandomNumber(-4000, -5000, 'e')));
 	obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(1100, 1150, 'e'), getRandomNumber(-5500, -6500, 'e')));
 	
-	//obsVect.push_back(Obstacle(obs1Txt, getRandomNumber(600, 800, 'e'), getRandomNumber(-10000, - 11000, 'e')));
-	//obsVect.push_back(Obstacle(obs2Txt, getRandomNumber(1000, 1100, 'e'), getRandomNumber(-15000, -1600, 'e')));
-
-	//Obstacle obs3(obs1Txt, getRandomNumber(1105, 1155, 'e'), getRandomNumber(-6000, -7000, 'e'), 0.5);
+	//Powerup
 	//Obstacle obs4(obs2Txt, getRandomNumber(1205, 1255, 'e'), getRandomNumber(-8000, -9000, 'e'), 0.5);
-
-
+	PowerUP power(powerUP, getRandomNumber(600, 1150, 'e'), getRandomNumber(-10000, -20000, 'e'));
+	power.setScale();
 
 	RenderWindow window(VideoMode(1920, 1080), "Drift Race", sf::Style::Close | sf::Style::Titlebar);
 	//window.setFramerateLimit(90);
@@ -456,6 +470,11 @@ int main() {
 					speed -= 0.09f;
 				}
 			}
+			else if (maxSpeed > 11 && maxSpeed <= 15) {
+				if (speed > 0) {
+					speed -= 0.1f;
+				}
+			}
 
 			BackgroundY1 += speed;
 			BackgroundY2 += speed;
@@ -488,9 +507,10 @@ int main() {
 
 		/////////////////////////////
 		// Game Level
-		if (score > 25 && score < 150) { maxSpeed = 7; oppMaxSpeed = 7; };
-		if (score > 150 && score < 200) { maxSpeed = 9; oppMaxSpeed = 9; };
-		if (score > 200 && score < 250) { maxSpeed = 11; oppMaxSpeed = 11; };
+		if (score > 25 && score < 75) { maxSpeed = 7; oppMaxSpeed = 7; };
+		if (score > 75 && score < 150) { maxSpeed = 9; oppMaxSpeed = 9; };
+		if (score > 150 && score < 200) { maxSpeed = 11; oppMaxSpeed = 11; };
+		if (score > 200 && score < 250) { maxSpeed = 15; oppMaxSpeed = 15; };
 
 
 		//////////////////////////////
@@ -506,6 +526,9 @@ int main() {
 				//cout << "Collided";
 				explode.push_back(Explosion(bombTxt, (int)racer.getPosX() - 170, (int)racer.getPosY() - 150, 256, 256, 48, 0.25));
 				racer.setLife(racer.getLife() - 1);
+				if (bulletCount > 0) {
+					bulletCount--;
+				}
 				//carCrash.play();
 				powerDownSound.play();
 			}
@@ -596,9 +619,35 @@ int main() {
 				//
 				obsVect[i].setPosY(getRandomNumber(-1000, -5500, 'e'));
 				racer.setLife(racer.getLife() - 1);
+				if (bulletCount > 0) {
+					bulletCount--;
+				}
 				//carCrash.play();
 				powerDownSound.play();
 			}
+		}
+
+
+		//////////////////////////////////////////////
+		///////////// POWER UPS /////////////
+		/////////////////////////////////////////////
+
+		if (getPPdistance(power, racer) <= 60) {
+			power.setPosY(getRandomNumber(-10000, -20000, 'e'));
+			power.setPosX(getRandomNumber(600, 1150, 'e'));
+
+			if (racer.getLife() < 3) {
+				racer.setLife(racer.getLife() + 1);
+			}
+			if (bulletCount < 10) {
+				bulletCount += 5;
+			}
+
+			powerUPSound.play();
+		}
+		if (power.getPosY() > 1080) {
+			power.setPosY(getRandomNumber(-5000, -8000, 'e'));
+			power.setPosX(getRandomNumber(600, 1150, 'e'));
 		}
 
 
@@ -610,7 +659,7 @@ int main() {
 
 			if (obsVect[i].getPosY() > 1200) {
 				if (i == 0) {
-					obsVect[i].setPosY((float)getRandomNumber(-1000, -2000, 'e'));
+					obsVect[i].setPosY((float)getRandomNumber(-1500, -2000, 'e'));
 				}
 				else if (i == 1) {
 					obsVect[i].setPosY((float)getRandomNumber(-2500, -3500, 'e'));
@@ -676,6 +725,13 @@ int main() {
 			obsVect[i].drawObs(window);
 		}
 
+
+		////////////////////
+		/// Render PowerUP //
+		/////////////////////
+		power.drawObs(window);
+
+
 		//Render Coin
 		for (int i = 0; i < coinVect.size(); i++) {
 			coinVect[i].update();
@@ -713,7 +769,7 @@ int main() {
 				window.draw(bullet[i].sprite);
 				bullet[i].updateBullet();
 
-				if (bullet[i].getPosY() < 0) {
+				if (bullet[i].getPosY() < 300) {
 					bullet.erase(bullet.begin());
 				}
 			}
@@ -752,7 +808,13 @@ int main() {
 
 		// Checking Player LifeSpan 
 		if (racer.getLife() <= 0) {
-			cout << "You Died !";
+
+			cout << "---------------------------------------------------------------------------" << endl;
+			cout << "---------------------------------------------------------------------------" << endl;
+			cout << "----------------------------- You Died ! ----------------------------------" << endl;
+			cout << "----------------------- Better Luck Next Time ! ---------------------------" << endl;
+			cout << "---------------------------------------------------------------------------" << endl;
+			cout << "---------------------------------------------------------------------------" << endl;
 
 			if (score > stoi(currentHighScore)) {
 				//Storing HIGH SCORE
@@ -761,7 +823,12 @@ int main() {
 
 				storeFile << score;
 				storeFile.close();
+
+				cout << " Congratulation You created a new HighScored with : " << score << "Points" << endl;
 			}
+
+				cout << " You Scored : " << score << " Points" << endl;
+				cout << " Current High Score : " << currentHighScore << " Points" << endl;
 
 			window.close();
 		}
@@ -835,6 +902,10 @@ void setEnemNewPosition(Enemy &enem, int num, int speed) {
 
 float getCPdistance(Coin& c, Player& p) {
 	return sqrt(pow((p.getPosX() - c.getPosX()),2) + pow((p.getPosY() - c.getPosY()),2));
+}
+
+float getPPdistance(PowerUP& pp, Player& p) {
+	return sqrt(pow((p.getPosX() - pp.getPosX()), 2) + pow((p.getPosY() - pp.getPosY()), 2));
 }
 
 void setCoinNewPosition(Coin& coin, int num) {
