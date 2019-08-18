@@ -8,7 +8,7 @@ using namespace sf;
 
 class Obstacle 
 {
-private:
+protected:
 	Sprite obsSpr;
 	float acc = 2.0f;
 	float posX;
@@ -19,6 +19,7 @@ public:
 	Obstacle(Texture& imgTexture, int posX, int posY);
 	void moveObs();
 	void setPosY(float);
+	void setPosX(float);
 	void drawObs(RenderWindow &window);
 	float getPosX();
 	float getPosY();
